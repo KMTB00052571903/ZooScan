@@ -9,7 +9,7 @@ export class SpeciesService {
       "Leon",
       "Sabana",
       "Alto",
-      "El león es un mamífero carnívoro de la familia de los félidos. Es conocido por su melena y su rugido poderoso."
+      "El león es un mamífero carnívoro de la familia de los félidos."
     ),
 
     new Species(
@@ -17,7 +17,7 @@ export class SpeciesService {
       "Elefante",
       "Sabana",
       "Medio",
-      "El elefante es el mamífero terrestre más grande. Se caracteriza por su trompa larga y sus colmillos de marfil."
+      "El elefante es el mamífero terrestre más grande."
     ),
 
     new Species(
@@ -25,7 +25,7 @@ export class SpeciesService {
       "Jirafa",
       "Sabana",
       "Bajo",
-      "La jirafa es el animal más alto del mundo. Tiene un cuello largo que le permite alcanzar las hojas de los árboles altos."
+      "La jirafa es el animal más alto del mundo."
     )
 
   ];
@@ -33,6 +33,12 @@ export class SpeciesService {
   getSpeciesById(id: string): Species | undefined {
 
     return this.speciesList.find(species => species.id === id);
+
+  }
+
+  getAllSpecies(): Species[] {
+
+    return this.speciesList;
 
   }
 

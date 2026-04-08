@@ -1,11 +1,12 @@
-interface ScanResult {
-  name: string;
-  habitat: string;
-  danger: string;
-}
+import { SpeciesService } from "../services/speciesService";
+import { Species } from "../models/Species";
 
 class ScannerView extends HTMLElement {
+
+  private speciesService = new SpeciesService();
+
   connectedCallback(): void {
+
     this.innerHTML = `
       <section class="card">
         <h2>Escanear QR</h2>
@@ -16,19 +17,27 @@ class ScannerView extends HTMLElement {
     const button = this.querySelector('#scanBtn') as HTMLButtonElement;
 
     button.addEventListener('click', () => {
-      const data: ScanResult = {
-        name: 'León',
-        habitat: 'Sabana',
-        danger: 'Alto'
-      };
 
-      const event = new CustomEvent<ScanResult>('scan-complete', {
-        detail: data
+      // Simula lectura QR → ID animal
+      const randomId = Math.floor(Math.random() * 3) + 1;
+
+      const species: Species | undefined =
+        this.speciesService.getSpeciesById(randomId.toString());
+
+      if (!species) return;
+
+      const event = new CustomEvent<Species>('scan-complete', {
+
+        detail: species
+
       });
 
       window.dispatchEvent(event);
+
     });
+
   }
+
 }
 
 customElements.define('scanner-view', ScannerView);
