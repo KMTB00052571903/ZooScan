@@ -5,7 +5,8 @@ export class Species {
     public name: string,
     public habitat: string,
     public dangerLevel: string,
-    public description: string
+    public description: string,
+    public image: string 
   ) {}
 
 }

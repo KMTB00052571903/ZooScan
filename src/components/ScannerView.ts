@@ -1,5 +1,7 @@
 import { SpeciesService } from "../services/speciesService.js";
 import { Species } from "../models/Species.js";
+import { appStore } from "../store/appStore.js";
+import { router } from "../router/index.js";
 
 class ScannerView extends HTMLElement {
 
@@ -7,36 +9,66 @@ class ScannerView extends HTMLElement {
 
   connectedCallback(): void {
 
+    this.render();
+
+  }
+
+  private render(): void {
+
     this.innerHTML = `
       <section class="card">
+
         <h2>Escanear QR</h2>
-        <button id="scanBtn">Simular Escaneo</button>
+
+        <button id="scanBtn">
+          Simular Escaneo
+        </button>
+
       </section>
     `;
 
-    const button = this.querySelector("#scanBtn") as HTMLButtonElement;
+    this.querySelector("#scanBtn")?.addEventListener(
+      "click",
+      () => this.simulateScan()
+    );
 
-    button.addEventListener("click", () => {
+  }
 
-      const randomId = Math.floor(Math.random() * 3) + 1;
+  private simulateScan(): void {
 
-      const species: Species | undefined =
-        this.speciesService.getSpeciesById(randomId.toString());
+    // genera ID aleatorio entre 1 y 3
+    const randomId = Math.floor(Math.random() * 3) + 1;
 
-      if (!species) return;
+    const species: Species | undefined =
+      this.speciesService.getSpeciesById(
+        randomId.toString()
+      );
 
-      const event = new CustomEvent<Species>("scan-complete", {
+    if (!species) return;
 
+
+    // dispara evento global (ResultsCard lo escucha)
+    const event = new CustomEvent<Species>(
+      "scan-complete",
+      {
         detail: species
+      }
+    );
 
-      });
+    window.dispatchEvent(event);
 
-      window.dispatchEvent(event);
 
-    });
+    // guarda especie en store global
+    appStore.setSelectedSpecies(species);
+
+
+    // navega automáticamente a pantalla detalle
+    router.navigate("animal");
 
   }
 
 }
 
 customElements.define("scanner-view", ScannerView);
+
+export default ScannerView;

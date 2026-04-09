@@ -1,7 +1,10 @@
+@import "./theme.css";
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #0f172a;
+  background: var(--background);
+  color: var(--text-main);
   color: white;
 }
 
@@ -17,6 +20,11 @@ main {
   border-radius: 16px;
   padding: 16px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transition: transform .2s ease;
+}
+
+.card:active {
+  transform: scale(.97);
 }
 
 button {

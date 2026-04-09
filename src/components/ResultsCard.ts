@@ -1,4 +1,6 @@
 import { Species } from "../models/Species.js";
+import { appStore } from "../store/appStore.js";
+import { router } from "../router/index.js";
 
 class ResultsCard extends HTMLElement {
 
@@ -36,13 +38,31 @@ class ResultsCard extends HTMLElement {
     }
 
     this.innerHTML = `
-      <section class="card">
+      <section class="card cursor-pointer" id="resultCard">
+
         <h2>${this.data.name}</h2>
+
         <p>Hábitat: ${this.data.habitat}</p>
+
         <p>Nivel de peligro: ${this.data.dangerLevel}</p>
+
         <p>${this.data.description}</p>
+
+        <small>Tap para ver más detalles</small>
+
       </section>
     `;
+
+    this.querySelector("#resultCard")?.addEventListener(
+      "click",
+      () => {
+
+        appStore.setSelectedSpecies(this.data!);
+
+        router.navigate("animal");
+
+      }
+    );
 
   }
 
