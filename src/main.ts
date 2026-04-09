@@ -1,5 +1,5 @@
 import "./layout/AppLayout.js";
-import "./screens/ScanScreen.js";
+import "./pages/ProfileScreen.js";
 import "./styles/styles.css";
 
 const app = document.querySelector("#app");
@@ -7,7 +7,7 @@ const app = document.querySelector("#app");
 if (app) {
   app.innerHTML = `
     <app-layout>
-      <scan-screen></scan-screen>
+      <profile-screen></profile-screen>
     </app-layout>
   `;
 }
