@@ -1,25 +1,22 @@
+// ===== src/pages/SettingsScreen.ts =====
 import "../layout/AppLayout.js";
-import "../components/ui/PrimaryButton.js";
 import "../components/ui/SectionCard.js";
-import "../components/ui/ToggleSwitch.js";
+import { router } from "../router/index.js";
 
 class SettingsScreen extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
-      <app-layout>
+      <app-layout title="Settings">
         <div class="settings-container">
+          
+          <!-- Subtitle -->
+          <p class="settings-subtitle">Configure your app experience</p>
 
-          <!-- Encabezado -->
-          <div class="settings-header">
-            <h1 class="settings-title">Settings</h1>
-            <p class="settings-subtitle">Configure your app experience</p>
-          </div>
-
-          <!-- Preferencias -->
+          <!-- Preferences Section -->
           <section-card title="Preferences">
             <div class="settings-item">
               <span>Notifications</span>
-              <toggle-switch></toggle-switch>
+              <span>🔒</span>
             </div>
             <div class="settings-item">
               <span>Language</span>
@@ -27,23 +24,23 @@ class SettingsScreen extends HTMLElement {
             </div>
             <div class="settings-item">
               <span>Dark mode</span>
-              <toggle-switch></toggle-switch>
+              <span class="settings-value">🟢</span>
             </div>
           </section-card>
 
-          <!-- Cuenta -->
+          <!-- Account Section -->
           <section-card title="Account">
             <div class="settings-item">
               <span>Privacy and security</span>
-              <span class="settings-arrow">→</span>
+              <span class="settings-arrow">➡️</span>
             </div>
             <div class="settings-item">
               <span>Help and support</span>
-              <span class="settings-arrow">→</span>
+              <span class="settings-arrow">➡️</span>
             </div>
           </section-card>
 
-          <!-- Acerca de -->
+          <!-- About Section -->
           <section-card title="About">
             <div class="settings-item">
               <span>Version</span>
@@ -51,16 +48,28 @@ class SettingsScreen extends HTMLElement {
             </div>
             <div class="settings-item">
               <span>Terms and conditions</span>
-              <span class="settings-arrow">→</span>
+              <span class="settings-arrow">➡️</span>
             </div>
           </section-card>
 
-          <!-- Botón Sign out -->
-          <primary-button>Sign out</primary-button>
+          <!-- Sign Out Button -->
+          <button class="signout-btn" id="signOutBtn">➡️ Sign out</button>
 
         </div>
       </app-layout>
     `;
+
+    this.setupListeners();
+  }
+
+  private setupListeners() {
+    const signOutBtn = this.querySelector('#signOutBtn');
+    if (signOutBtn) {
+      signOutBtn.addEventListener('click', () => {
+        console.log('Sign out clicked');
+        router.navigate('profile');
+      });
+    }
   }
 }
 
