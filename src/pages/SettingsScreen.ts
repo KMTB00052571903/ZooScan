@@ -1,5 +1,5 @@
-import "../layout/AppLayout";
-import "../components/ui/ToggleSwitch";
+import "../layout/AppLayout.js";
+import "../components/ui/ToggleSwitch.js";
 
 class SettingsScreen extends HTMLElement {
   connectedCallback() {

@@ -1,3 +1,5 @@
+import "../layout/AppLayout.js";
+
 class ProfileScreen extends HTMLElement {
 
   connectedCallback() {

@@ -1,7 +1,7 @@
-import "../pages/ProfileScreen";
-import "../pages/SettingsScreen";
-import "../pages/QRScreen";
-import "../pages/AnimalDetailScreen";
+import "../pages/ProfileScreen.js";
+import "../pages/SettingsScreen.js";
+import "../pages/QRScreen.js";
+import "../pages/AnimalDetailScreen.js";
 
 type Route =
   | "profile"

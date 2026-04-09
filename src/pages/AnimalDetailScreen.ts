@@ -1,4 +1,4 @@
-import "../layout/AppLayout";
+import "../layout/AppLayout.js";
 import { appStore } from "../store/appStore.js";
 
 class AnimalDetailScreen extends HTMLElement {
