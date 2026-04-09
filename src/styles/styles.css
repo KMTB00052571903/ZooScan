@@ -1,37 +1,250 @@
 @import "./theme.css";
 
+/* RESET */
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: system-ui, sans-serif;
   background: var(--background);
-  color: var(--text-main);
-  color: white;
 }
 
-main {
+
+/* APP FRAME */
+
+#app {
+  max-width: 390px;
+  height: 844px;
+  margin: auto;
+  background: white;
+  border-radius: 30px;
+  overflow: hidden;
+  position: relative;
+}
+
+
+/* CONTAINER */
+
+.app-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  height: 100%;
+}
+
+
+/* HEADER */
+
+.app-header {
+  height: 70px;
+  padding: 0 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: white;
+}
+
+
+.header-title {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+
+/* HEADER ICON BUTTON */
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+
+/* MAIN CONTENT */
+
+.app-main {
+  flex: 1;
   padding: 20px;
 }
 
-.card {
-  background: #1e293b;
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  transition: transform .2s ease;
+
+/* BOTTOM NAV */
+
+.bottom-nav {
+  height: 90px;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  background: #d9e1df;
+
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+
+  position: relative;
 }
 
-.card:active {
-  transform: scale(.97);
-}
 
-button {
-  background: #22c55e;
+/* NAV BUTTONS */
+
+.nav-btn {
+  background: none;
   border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  color: white;
+  font-size: 26px;
   cursor: pointer;
+}
+
+
+/* CAMERA FLOATING BUTTON */
+
+.camera-btn {
+  position: absolute;
+
+  top: -28px;
+
+  width: 70px;
+  height: 70px;
+
+  border-radius: 20px;
+
+  background: #4f7f6f;
+
+  border: none;
+
+  font-size: 28px;
+  color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  box-shadow: 0px 6px 16px rgba(0,0,0,0.2);
+
+  cursor: pointer;
+}
+
+/* SCAN SCREEN */
+
+.scan-screen {
+  padding: 24px;
+}
+
+
+/* TITLE */
+
+.scan-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #2c5a44;
+  margin-bottom: 12px;
+}
+
+
+/* DESCRIPTION */
+
+.scan-description {
+  font-size: 16px;
+  color: #4b5563;
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+
+/* SCANNER FRAME */
+
+.scanner-frame {
+  position: relative;
+  height: 260px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* QR BOX */
+
+.qr-box {
+  width: 120px;
+  height: 120px;
+
+  background: #4f7f6f;
+
+  border-radius: 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 40px;
+  color: white;
+
+  margin-bottom: 20px;
+}
+
+
+/* BUTTON */
+
+.scan-btn {
+  background: #7fa3d4;
+  color: white;
+
+  border: none;
+
+  padding: 14px 28px;
+
+  font-size: 18px;
+  font-weight: 600;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+}
+
+
+/* SCANNER CORNERS */
+
+.scanner-corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 4px solid black;
+}
+
+
+/* POSITIONS */
+
+.top-left {
+  top: 0;
+  left: 40px;
+  border-right: none;
+  border-bottom: none;
+  border-radius: 12px 0 0 0;
+}
+
+.top-right {
+  top: 0;
+  right: 40px;
+  border-left: none;
+  border-bottom: none;
+  border-radius: 0 12px 0 0;
+}
+
+.bottom-left {
+  bottom: 0;
+  left: 40px;
+  border-right: none;
+  border-top: none;
+  border-radius: 0 0 0 12px;
+}
+
+.bottom-right {
+  bottom: 0;
+  right: 40px;
+  border-left: none;
+  border-top: none;
+  border-radius: 0 0 12px 0;
 }

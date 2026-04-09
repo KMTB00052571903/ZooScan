@@ -1,11 +1,13 @@
-import './components/Header.js';
-import './components/ScannerView.js';
-import './components/ResultsCard.js';
-import './components/MapView.js';
+import "./layout/AppLayout.js";
+import "./screens/ScanScreen.js";
+import "./styles/styles.css";
 
-import { router } from "./router/index.js";
+const app = document.querySelector("#app");
 
-// pantalla inicial
-window.addEventListener("DOMContentLoaded", () => {
-  router.navigate("qr");
-});
+if (app) {
+  app.innerHTML = `
+    <app-layout>
+      <scan-screen></scan-screen>
+    </app-layout>
+  `;
+}

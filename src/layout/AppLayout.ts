@@ -1,106 +1,56 @@
-import { router } from "../router/index.js";
-
 class AppLayout extends HTMLElement {
-
   connectedCallback() {
+    this.render();
+  }
 
+  render() {
     this.innerHTML = `
-
-      <div class="max-w-sm mx-auto h-screen flex flex-col bg-[#F6F8F7]">
+      <div class="app-container">
 
         <!-- HEADER -->
+        <header class="app-header">
 
-        <header class="flex items-center justify-between px-5 py-4">
-
-          <button id="backBtn">
-            ←
+          <button class="icon-btn">
+            ⚙️
           </button>
 
-          <div class="flex gap-4">
+          <h1 class="header-title">
+            ZooScan
+          </h1>
 
-            <button id="settingsBtn">
-              ⚙️
-            </button>
-
-            <button id="profileHeaderBtn">
-              👤
-            </button>
-
-          </div>
+          <button class="icon-btn">
+            👤
+          </button>
 
         </header>
 
 
         <!-- MAIN CONTENT -->
-
-        <main class="flex-1 overflow-y-auto px-5">
-
+        <main class="app-main">
           <slot></slot>
-
         </main>
 
 
         <!-- BOTTOM NAV -->
+        <nav class="bottom-nav">
 
-        <nav class="bg-[#DCE7E3] rounded-t-3xl p-3 flex justify-around">
-
-          <button id="homeBtn">
-            🦎
+          <button class="nav-btn">
+            🏠
           </button>
 
-          <button id="scanBtn">
+          <button class="camera-btn active">
             📷
           </button>
 
-          <button id="profileBtn">
-            👤
+          <button class="nav-btn">
+            🏅
           </button>
 
         </nav>
 
       </div>
     `;
-
-
-    /* NAVIGATION EVENTS */
-
-    this.querySelector("#homeBtn")?.addEventListener(
-      "click",
-      () => router.navigate("animal")
-    );
-
-
-    this.querySelector("#scanBtn")?.addEventListener(
-      "click",
-      () => router.navigate("qr")
-    );
-
-
-    this.querySelector("#profileBtn")?.addEventListener(
-      "click",
-      () => router.navigate("profile")
-    );
-
-
-    this.querySelector("#settingsBtn")?.addEventListener(
-      "click",
-      () => router.navigate("settings")
-    );
-
-
-    this.querySelector("#profileHeaderBtn")?.addEventListener(
-      "click",
-      () => router.navigate("profile")
-    );
-
-
-    this.querySelector("#backBtn")?.addEventListener(
-      "click",
-      () => window.history.back()
-    );
-
   }
-
 }
 
 customElements.define("app-layout", AppLayout);

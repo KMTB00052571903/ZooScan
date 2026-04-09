@@ -2,47 +2,63 @@ import "../layout/AppLayout.js";
 
 class QRScreen extends HTMLElement {
 
-  connectedCallback() {
+connectedCallback(){
 
-    this.innerHTML = `
-      <app-layout>
+this.innerHTML = `
 
-        <h1 class="text-2xl font-bold text-[#1F3A33]">
-          QR scanning
-        </h1>
+<app-layout>
 
-        <p class="text-[#6B7C76] mt-2">
-          Scan exhibit QR code for info
-        </p>
+<section class="qr-container">
 
-        <div class="
-          flex
-          flex-col
-          items-center
-          justify-center
-          h-full
-        ">
+<h1 class="qr-title">
 
-          <div class="
-            w-44
-            h-44
-            border-4
-            border-black
-            rounded-3xl
-          ">
-          </div>
+QR scanning
 
-          <primary-button>
-            Scan QR Code
-          </primary-button>
+</h1>
 
-        </div>
+<p class="qr-description">
 
-      </app-layout>
-    `;
-  }
+When you approach an exhibit, make sure to scan its respective QR code for special information.
+
+</p>
+
+
+<div class="scan-wrapper">
+
+<div class="corner top-left"></div>
+
+<div class="corner top-right"></div>
+
+<div class="corner bottom-left"></div>
+
+<div class="corner bottom-right"></div>
+
+
+<div class="qr-icon">
+
+⌁
+
+</div>
+
+</div>
+
+
+<button class="scan-btn">
+
+Scan QR Code
+
+</button>
+
+</section>
+
+</app-layout>
+
+`;
+
+}
 
 }
 
 customElements.define("qr-screen", QRScreen);
+
 export default QRScreen;
