@@ -1,101 +1,68 @@
 import "../layout/AppLayout.js";
+import "../components/ui/PrimaryButton.js";
+import "../components/ui/SectionCard.js";
 import "../components/ui/ToggleSwitch.js";
 
 class SettingsScreen extends HTMLElement {
   connectedCallback() {
-    this.render();
-  }
-
-  render() {
     this.innerHTML = `
       <app-layout>
-
         <div class="space-y-6">
 
+          <!-- Encabezado -->
           <div>
-            <h1 class="text-2xl font-bold text-[#1F3A33]">
+            <h1 class="text-2xl font-bold text-[var(--text-main)]">
               Settings
             </h1>
-
-            <p class="text-[#6B7C76]">
+            <p class="text-[var(--text-secondary)]">
               Configure your app experience
             </p>
           </div>
 
-
-          <!-- Preferences -->
-
-          <section class="bg-[#DCE7E3] rounded-2xl divide-y">
-
-            <div class="flex items-center justify-between p-4">
+          <!-- Preferencias -->
+          <section-card title="Preferences">
+            <div class="flex items-center justify-between p-2">
               <span>Notifications</span>
               <toggle-switch></toggle-switch>
             </div>
-
-            <div class="flex items-center justify-between p-4">
+            <div class="flex items-center justify-between p-2">
               <span>Language</span>
-              <span class="text-[#6B7C76]">
-                English
-              </span>
+              <span class="text-[var(--text-secondary)]">English</span>
             </div>
-
-            <div class="flex items-center justify-between p-4">
+            <div class="flex items-center justify-between p-2">
               <span>Dark mode</span>
               <toggle-switch></toggle-switch>
             </div>
+          </section-card>
 
-          </section>
-
-
-          <!-- Account -->
-
-          <section class="bg-[#DCE7E3] rounded-2xl divide-y">
-
-            <div class="flex justify-between p-4">
+          <!-- Cuenta -->
+          <section-card title="Account">
+            <div class="flex justify-between p-2">
               <span>Privacy and security</span>
               →
             </div>
-
-            <div class="flex justify-between p-4">
+            <div class="flex justify-between p-2">
               <span>Help and support</span>
               →
             </div>
+          </section-card>
 
-          </section>
-
-
-          <!-- About -->
-
-          <section class="bg-[#DCE7E3] rounded-2xl divide-y">
-
-            <div class="flex justify-between p-4">
+          <!-- Acerca de -->
+          <section-card title="About">
+            <div class="flex justify-between p-2">
               <span>Version</span>
               <span>1.0.0</span>
             </div>
-
-            <div class="flex justify-between p-4">
+            <div class="flex justify-between p-2">
               <span>Terms and conditions</span>
               →
             </div>
+          </section-card>
 
-          </section>
-
-
-          <!-- Sign out -->
-
-          <button class="
-            w-full
-            border
-            border-red-400
-            text-red-500
-            py-3
-            rounded-xl
-          ">
-            Sign out
-          </button>
+          <!-- Botón Sign out -->
+          <primary-button label="Sign out" color="red"></primary-button>
 
         </div>
-
       </app-layout>
     `;
   }
