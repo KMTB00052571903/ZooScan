@@ -10,7 +10,7 @@ class AnimalDetailScreen extends HTMLElement {
     if (!species) {
       this.innerHTML = `
         <app-layout>
-          <p class="text-[var(--text-secondary)]">No animal selected</p>
+          <p class="detail-empty">No animal selected</p>
         </app-layout>
       `;
       return;
@@ -18,26 +18,24 @@ class AnimalDetailScreen extends HTMLElement {
 
     this.innerHTML = `
       <app-layout>
-        <div class="space-y-6">
+        <div class="detail-container">
 
           <!-- Nombre -->
-          <h1 class="text-2xl font-bold text-[var(--text-main)]">
-            ${species.name}
-          </h1>
+          <h1 class="detail-name">${species.name}</h1>
 
           <!-- Imagen -->
           <img
             src="${species.image || "https://upload.wikimedia.org/wikipedia/commons/0/0b/Iguana_iguana_Portoviejo_02.jpg"}"
-            class="rounded-2xl w-full"
+            class="detail-image"
           />
 
           <!-- Descripción -->
-          <p class="text-[var(--text-secondary)] leading-relaxed">
+          <p class="detail-description">
             ${species.description}
           </p>
 
           <!-- Botón AR -->
-          <primary-button label="AR Model"></primary-button>
+          <primary-button>View AR Model</primary-button>
 
           <!-- Secciones -->
           <section-card title="Habitat">

@@ -7,29 +7,25 @@ class SettingsScreen extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
       <app-layout>
-        <div class="space-y-6">
+        <div class="settings-container">
 
           <!-- Encabezado -->
-          <div>
-            <h1 class="text-2xl font-bold text-[var(--text-main)]">
-              Settings
-            </h1>
-            <p class="text-[var(--text-secondary)]">
-              Configure your app experience
-            </p>
+          <div class="settings-header">
+            <h1 class="settings-title">Settings</h1>
+            <p class="settings-subtitle">Configure your app experience</p>
           </div>
 
           <!-- Preferencias -->
           <section-card title="Preferences">
-            <div class="flex items-center justify-between p-2">
+            <div class="settings-item">
               <span>Notifications</span>
               <toggle-switch></toggle-switch>
             </div>
-            <div class="flex items-center justify-between p-2">
+            <div class="settings-item">
               <span>Language</span>
-              <span class="text-[var(--text-secondary)]">English</span>
+              <span class="settings-value">English</span>
             </div>
-            <div class="flex items-center justify-between p-2">
+            <div class="settings-item">
               <span>Dark mode</span>
               <toggle-switch></toggle-switch>
             </div>
@@ -37,30 +33,30 @@ class SettingsScreen extends HTMLElement {
 
           <!-- Cuenta -->
           <section-card title="Account">
-            <div class="flex justify-between p-2">
+            <div class="settings-item">
               <span>Privacy and security</span>
-              →
+              <span class="settings-arrow">→</span>
             </div>
-            <div class="flex justify-between p-2">
+            <div class="settings-item">
               <span>Help and support</span>
-              →
+              <span class="settings-arrow">→</span>
             </div>
           </section-card>
 
           <!-- Acerca de -->
           <section-card title="About">
-            <div class="flex justify-between p-2">
+            <div class="settings-item">
               <span>Version</span>
-              <span>1.0.0</span>
+              <span class="settings-value">1.0.0</span>
             </div>
-            <div class="flex justify-between p-2">
+            <div class="settings-item">
               <span>Terms and conditions</span>
-              →
+              <span class="settings-arrow">→</span>
             </div>
           </section-card>
 
           <!-- Botón Sign out -->
-          <primary-button label="Sign out" color="red"></primary-button>
+          <primary-button>Sign out</primary-button>
 
         </div>
       </app-layout>
