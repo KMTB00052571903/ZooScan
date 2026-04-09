@@ -1,5 +1,5 @@
-import { SpeciesService } from "../services/speciesService";
-import { Species } from "../models/Species";
+import { SpeciesService } from "../services/speciesService.js";
+import { Species } from "../models/Species.js";
 
 class ScannerView extends HTMLElement {
 
