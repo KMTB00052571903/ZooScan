@@ -1,4 +1,4 @@
-import { Species } from "../models/Species";
+import { Species } from "../models/Species.js";
 
 export class SpeciesService {
 
