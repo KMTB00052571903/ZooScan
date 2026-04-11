@@ -1,26 +1,21 @@
-import { useState } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
-import { Header } from './components/Header';
-import { ScannerView, type ScanResult } from './components/ScannerView';
-import { ResultsCard } from './components/ResultsCard';
-import { MapView } from './components/MapView';
+import { ProfileScreen } from './pages/ProfileScreen';
+import { QRScreen } from './pages/QRScreen';
+import { AnimalDetailScreen } from './pages/AnimalDetailScreen';
+import { SettingsScreen } from './pages/SettingsScreen';
+import { ScanScreen } from './screens/ScanScreen';
 
 function App() {
-  const [scanResult, setScanResult] = useState<ScanResult | null>(null);
-
-  const handleScanComplete = (result: ScanResult) => {
-    setScanResult(result);
-  };
-
   return (
-    <div className="App">
-      <Header />
-      <main style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <ScannerView onScanComplete={handleScanComplete} />
-        <ResultsCard data={scanResult} />
-        <MapView />
-      </main>
-    </div>
+    <Routes>
+      <Route path="/" element={<Navigate to="/profile" replace />} />
+      <Route path="/profile" element={<ProfileScreen />} />
+      <Route path="/qr" element={<QRScreen />} />
+      <Route path="/animal" element={<AnimalDetailScreen />} />
+      <Route path="/settings" element={<SettingsScreen />} />
+      <Route path="/scan" element={<ScanScreen />} />
+    </Routes>
   );
 }
 
