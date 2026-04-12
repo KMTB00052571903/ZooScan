@@ -5,11 +5,15 @@ import { QRScreen } from './pages/QRScreen';
 import { AnimalDetailScreen } from './pages/AnimalDetailScreen';
 import { SettingsScreen } from './pages/SettingsScreen';
 import { ScanScreen } from './screens/ScanScreen';
+import { LoginScreen } from './pages/auth/LoginScreen';
+import { SignupScreen } from './pages/auth/SignupScreen';
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/profile" replace />} />
+      <Route path="/login" element={<LoginScreen />} />
+      <Route path="/signup" element={<SignupScreen />} />
       <Route path="/profile" element={<ProfileScreen />} />
       <Route path="/qr" element={<QRScreen />} />
       <Route path="/animal" element={<AnimalDetailScreen />} />

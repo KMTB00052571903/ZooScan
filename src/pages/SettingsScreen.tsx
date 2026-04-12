@@ -7,7 +7,7 @@ export const SettingsScreen = () => {
 
   const handleSignOut = () => {
     console.log('Sign out clicked');
-    navigate('/profile');
+    navigate('/login');
   };
 
   return (
