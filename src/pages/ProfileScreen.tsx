@@ -1,8 +1,19 @@
 import { AppLayout } from '../layout/AppLayout';
 import { StatCard } from '../components/ui/StatCard';
 import { FavoriteCard } from '../components/ui/FavoriteCard';
+import { useNavigate } from 'react-router-dom';
+import { useSpecies } from '../context/SpeciesContext';
+import type { Species } from '../models/Species';
 
 export const ProfileScreen = () => {
+  const navigate = useNavigate();
+  const { setSelectedSpecies } = useSpecies();
+
+  const handleFavoriteClick = (speciesMock: Species) => {
+    setSelectedSpecies(speciesMock);
+    navigate('/animal');
+  };
+
   return (
     <AppLayout title="Profile">
       <div className="profile-container">
@@ -32,16 +43,37 @@ export const ProfileScreen = () => {
             name="Green iguana" 
             type="Reptiles" 
             emoji="🦎"
+            onClick={() => handleFavoriteClick({
+              id: "iguana",
+              name: "Green iguana",
+              habitat: "Tropical rainforest",
+              dangerLevel: "Low",
+              description: "The green iguana is a large, arboreal, mostly herbivorous species of lizard of the genus Iguana native to the Caribbean."
+            })}
           />
           <FavoriteCard 
             name="African lion" 
             type="Mammals" 
             emoji="🦁"
+            onClick={() => handleFavoriteClick({
+              id: "lion",
+              name: "African lion",
+              habitat: "Savannah",
+              dangerLevel: "High",
+              description: "The lion is a large cat of the genus Panthera native to Africa and India. It has a muscular, deep-chested body and a prominent mane."
+            })}
           />
           <FavoriteCard 
             name="Golden eagle" 
             type="Birds" 
             emoji="🦅"
+            onClick={() => handleFavoriteClick({
+              id: "eagle",
+              name: "Golden eagle",
+              habitat: "Mountains",
+              dangerLevel: "Medium",
+              description: "The golden eagle is a bird of prey living in the Northern Hemisphere. It is the most widely distributed species of eagle."
+            })}
           />
         </div>
 
