@@ -6,7 +6,7 @@ export const SignupScreen = () => {
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/profile');
+    navigate('/home');
   };
 
   return (

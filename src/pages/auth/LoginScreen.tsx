@@ -6,7 +6,7 @@ export const LoginScreen = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/profile');
+    navigate('/home');
   };
 
   return (

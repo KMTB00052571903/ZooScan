@@ -1,4 +1,5 @@
 import { AppLayout } from '../layout/AppLayout';
+import { QrCodeIcon } from '../components/ui/QrCodeIcon';
 
 export const QRScreen = () => {
   const handleScan = () => {
@@ -17,7 +18,9 @@ export const QRScreen = () => {
           <div className="qr-corner top-right"></div>
           <div className="qr-corner bottom-left"></div>
           <div className="qr-corner bottom-right"></div>
-          <div className="qr-box">📷</div>
+          <div className="qr-box">
+            <QrCodeIcon size={80} />
+          </div>
         </div>
         <button className="scan-btn" id="scanBtn" onClick={handleScan}>Scan QR Code</button>
         <div className="steps-indicator">

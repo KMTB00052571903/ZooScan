@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { QrCodeIcon } from '../components/ui/QrCodeIcon';
 
 interface AppLayoutProps {
   title: string;
@@ -11,12 +12,25 @@ export const AppLayout = ({ title, children }: AppLayoutProps) => {
 
   const renderHeaderContent = () => {
     switch (title) {
+      case 'Home':
+        return (
+          <>
+            <button className="icon-btn" onClick={() => navigate('/settings')} style={{ background: 'transparent', border: 'none' }}>⚙️</button>
+            <div style={{ flex: 1 }}></div>
+            <button className="icon-btn" onClick={() => navigate('/profile')} style={{ background: 'transparent', border: 'none' }}>👤</button>
+          </>
+        );
       case 'Profile':
         return (
           <>
-            <button className="icon-btn" onClick={() => navigate('/qr')}>📷</button>
+            <button className="icon-btn" onClick={() => navigate('/home')}>←</button>
             <h1 className="header-title">{title}</h1>
-            <button className="icon-btn" onClick={() => navigate('/settings')}>⚙️</button>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button className="icon-btn" onClick={() => navigate('/qr')}>
+                <QrCodeIcon size={20} />
+              </button>
+              <button className="icon-btn" onClick={() => navigate('/settings')}>⚙️</button>
+            </div>
           </>
         );
       case 'Settings':
