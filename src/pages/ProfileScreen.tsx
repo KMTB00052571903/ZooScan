@@ -79,7 +79,7 @@ export const ProfileScreen = () => {
 
         {/* Acciones */}
         <div className="profile-actions">
-          <div className="action-item">
+          <div className="action-item" onClick={() => navigate('/edit-profile')}>
             <span>Edit profile</span>
             <span className="action-arrow">›</span>
           </div>

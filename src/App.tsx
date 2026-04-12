@@ -7,14 +7,16 @@ import { SettingsScreen } from './pages/SettingsScreen';
 import { ScanScreen } from './screens/ScanScreen';
 import { LoginScreen } from './pages/auth/LoginScreen';
 import { SignupScreen } from './pages/auth/SignupScreen';
+import { EditProfileScreen } from './pages/EditProfileScreen';
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/profile" replace />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginScreen />} />
       <Route path="/signup" element={<SignupScreen />} />
       <Route path="/profile" element={<ProfileScreen />} />
+      <Route path="/edit-profile" element={<EditProfileScreen />} />
       <Route path="/qr" element={<QRScreen />} />
       <Route path="/animal" element={<AnimalDetailScreen />} />
       <Route path="/settings" element={<SettingsScreen />} />

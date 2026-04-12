@@ -22,6 +22,7 @@ export const AppLayout = ({ title, children }: AppLayoutProps) => {
       case 'Settings':
       case 'QR scanning':
       case 'Animal Detail':
+      case 'Edit Profile':
         return (
           <>
             <button className="icon-btn" onClick={() => navigate(-1)}>←</button>
