@@ -7,23 +7,18 @@ export const EditProfileScreen = () => {
   const navigate = useNavigate();
 
   const handleSave = () => {
-    // Navigate back to profile on save
     navigate('/profile');
   };
 
   return (
     <AppLayout title="Edit Profile">
       <div className="profile-container">
-        
-        {/* Avatar Editable */}
-        <div className="profile-avatar" style={{ marginBottom: '0.5rem', cursor: 'pointer' }}>
+                <div className="profile-avatar" style={{ marginBottom: '0.5rem', cursor: 'pointer' }}>
           U
         </div>
         <p className="auth-link" style={{ fontSize: '0.9rem', marginBottom: '2rem' }}>
           Change photo
         </p>
-
-        {/* Inputs */}
         <div style={{ width: '100%', marginBottom: '2rem' }}>
           <SectionCard title="Personal Information">
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '0 0.5rem' }}>
@@ -49,8 +44,6 @@ export const EditProfileScreen = () => {
             </div>
           </SectionCard>
         </div>
-
-        {/* Action Button */}
         <PrimaryButton onClick={handleSave}>
           Save changes
         </PrimaryButton>

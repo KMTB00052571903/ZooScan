@@ -17,26 +17,16 @@ export const AnimalDetailScreen = () => {
   return (
     <AppLayout title="Animal Detail">
       <div className="detail-container">
-
-        {/* Nombre */}
         <h1 className="detail-name">{selectedSpecies.name}</h1>
-
-        {/* Imagen */}
         <img
-          src={"https://upload.wikimedia.org/wikipedia/commons/0/0b/Iguana_iguana_Portoviejo_02.jpg"} // Usa species.image si existe
+          src={"https://upload.wikimedia.org/wikipedia/commons/0/0b/Iguana_iguana_Portoviejo_02.jpg"}
           className="detail-image"
           alt={selectedSpecies.name}
         />
-
-        {/* Descripción */}
         <p className="detail-description">
           {selectedSpecies.description}
         </p>
-
-        {/* Botón AR */}
         <PrimaryButton>View AR Model</PrimaryButton>
-
-        {/* Secciones */}
         <SectionCard title="Habitat">
           {selectedSpecies.habitat}
         </SectionCard>

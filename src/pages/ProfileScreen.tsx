@@ -31,13 +31,9 @@ export const ProfileScreen = () => {
           <StatCard value="12" label="Favorites" />
           <StatCard value="8" label="Hours" />
         </div>
-
-        {/* My favorites */}
         <div className="favorites-header">
           <h3 className="favorites-title">My favorites</h3>
         </div>
-
-        {/* Lista de favoritos */}
         <div className="favorites-list">
           <FavoriteCard 
             name="Green iguana" 
