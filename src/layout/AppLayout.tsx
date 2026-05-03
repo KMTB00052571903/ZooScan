@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { QrCodeIcon } from '../components/ui/icons/QrCodeIcon';
 import { SettingsIcon } from '../components/ui/icons/SettingsIcon';
 import { ProfileIcon } from '../components/ui/icons/ProfileIcon';
+import { CollectionIcon } from '../components/ui/icons/CollectionIcon';
 
 interface AppLayoutProps {
   title: string;
@@ -19,6 +20,9 @@ export const AppLayout = ({ title, children }: AppLayoutProps) => {
           <>
             <button className="icon-btn" onClick={() => navigate('/settings')} style={{ background: 'transparent', border: 'none' }}>
               <SettingsIcon size={20} />
+            </button>
+            <button className="icon-btn" onClick={() => navigate('/collection')} style={{ background: 'transparent', border: 'none', marginLeft: '10px' }}>
+              <CollectionIcon size={20} />
             </button>
             <div style={{ flex: 1 }}></div>
             <button className="icon-btn" onClick={() => navigate('/profile')} style={{ background: 'transparent', border: 'none' }}>
@@ -45,6 +49,7 @@ export const AppLayout = ({ title, children }: AppLayoutProps) => {
       case 'QR scanning':
       case 'Animal Detail':
       case 'Edit Profile':
+      case 'My Collection':
         return (
           <>
             <button className="icon-btn" onClick={() => navigate(-1)}>←</button>

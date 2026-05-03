@@ -3,11 +3,16 @@ import { StatCard } from '../components/ui/StatCard';
 import { FavoriteCard } from '../components/ui/FavoriteCard';
 import { useNavigate } from 'react-router-dom';
 import { useSpecies } from '../context/SpeciesContext';
+import { useUser } from '../context/UserContext';
 import type { Species } from '../models/Species';
 
 export const ProfileScreen = () => {
   const navigate = useNavigate();
   const { setSelectedSpecies } = useSpecies();
+  const { xp, level, badges, scannedAnimals } = useUser();
+  const xpForNextLevel = 150;
+  const xpInCurrentLevel = xp % xpForNextLevel;
+  const xpPercentage = (xpInCurrentLevel / xpForNextLevel) * 100;
 
   const handleFavoriteClick = (speciesMock: Species) => {
     setSelectedSpecies(speciesMock);
@@ -25,9 +30,32 @@ export const ProfileScreen = () => {
         <h2 className="profile-name">User</h2>
         <p className="profile-email">user@email.com</p>
 
+        {/* XP Progress Bar */}
+        <div className="xp-container">
+          <div className="xp-header">
+            <span className="xp-level">Level {level}</span>
+            <span className="xp-amount">{xpInCurrentLevel} / {xpForNextLevel} XP</span>
+          </div>
+          <div className="xp-bar-bg">
+            <div className="xp-bar-fill" style={{ width: `${xpPercentage}%` }}></div>
+          </div>
+        </div>
+
+        {/* Badges */}
+        {badges.length > 0 && (
+          <div style={{ width: '100%', marginBottom: '1rem' }}>
+            <h3 className="favorites-title" style={{ marginBottom: '0.75rem' }}>My Badges</h3>
+            <div className="badges-container">
+              {badges.map(badge => (
+                <div key={badge} className="badge">{badge}</div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Estadísticas */}
         <div className="profile-stats">
-          <StatCard value="24" label="Visited" />
+          <StatCard value={scannedAnimals.length.toString()} label="Scanned" />
           <StatCard value="12" label="Favorites" />
           <StatCard value="8" label="Hours" />
         </div>
