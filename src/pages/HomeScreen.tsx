@@ -4,7 +4,7 @@ import { FavoriteCard } from '../components/ui/FavoriteCard';
 import { useSpecies } from '../context/SpeciesContext';
 import type { Species } from '../models/Species';
 
-import { QrCodeIcon } from '../components/ui/QrCodeIcon';
+import { QrCodeIcon } from '../components/ui/icons/QrCodeIcon';
 
 export const HomeScreen = () => {
   const navigate = useNavigate();
