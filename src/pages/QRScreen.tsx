@@ -1,5 +1,5 @@
 import { AppLayout } from '../layout/AppLayout';
-import { QrCodeIcon } from '../components/ui/QrCodeIcon';
+import { QrCodeIcon } from '../components/ui/icons/QrCodeIcon';
 
 export const QRScreen = () => {
   const handleScan = () => {
