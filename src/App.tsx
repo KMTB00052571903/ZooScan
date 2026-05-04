@@ -9,6 +9,7 @@ import { LoginScreen } from './pages/auth/LoginScreen';
 import { SignupScreen } from './pages/auth/SignupScreen';
 import { EditProfileScreen } from './pages/EditProfileScreen';
 import { HomeScreen } from './pages/HomeScreen';
+import { Dashboard } from './pages/staff/Dashboard';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
       <Route path="/animal" element={<AnimalDetailScreen />} />
       <Route path="/settings" element={<SettingsScreen />} />
       <Route path="/scan" element={<ScanScreen />} />
+      <Route path="/dashboard" element={<Dashboard/>} />
     </Routes>
   );
 }
