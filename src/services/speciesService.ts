@@ -1,29 +1,47 @@
-import type { Species } from "../models/Species"; // Importamos la interfaz que creamos
+import type { Species } from "../models/Species";
 
 export const speciesList: Species[] = [
   {
-    id: "1",
+    id: 1,
     name: "León",
+    species: "Panthera leo",
     habitat: "Sabana",
-    dangerLevel: "Alto",
-    description: "El león es un mamífero carnívoro de la familia de los félidos. Es conocido por su melena y su rugido poderoso."
+    description: "El león es un mamífero carnívoro de la familia de los félidos. Es conocido por su melena y su rugido poderoso.",
+    image_url: "",
+    qr_code_id: "ANIMAL_LEON_01",
+    danger_level: "High",
+    dangerLevel: "High",
+    category: "mammals",
+    fun_facts: [],
   },
   {
-    id: "2",
+    id: 2,
     name: "Elefante",
+    species: "Loxodonta africana",
     habitat: "Sabana",
-    dangerLevel: "Medio",
-    description: "El elefante es el mamífero terrestre más grande. Se caracteriza por su trompa larga y sus colmillos de marfil."
+    description: "El elefante es el mamífero terrestre más grande. Se caracteriza por su trompa larga y sus colmillos de marfil.",
+    image_url: "",
+    qr_code_id: "ANIMAL_ELEFANTE_01",
+    danger_level: "Medium",
+    dangerLevel: "Medium",
+    category: "mammals",
+    fun_facts: [],
   },
   {
-    id: "3",
+    id: 3,
     name: "Jirafa",
+    species: "Giraffa camelopardalis",
     habitat: "Sabana",
-    dangerLevel: "Bajo",
-    description: "La jirafa es el animal más alto del mundo. Tiene un cuello largo que le permite alcanzar las hojas de los árboles altos."
-  }
+    description: "La jirafa es el animal más alto del mundo. Tiene un cuello largo que le permite alcanzar las hojas de los árboles altos.",
+    image_url: "",
+    qr_code_id: "ANIMAL_JIRAFA_01",
+    danger_level: "Low",
+    dangerLevel: "Low",
+    category: "mammals",
+    fun_facts: [],
+  },
 ];
 
-export const getSpeciesById = (id: string): Species | undefined => {
+export const getSpeciesById = (id: number): Species | undefined => {
   return speciesList.find(species => species.id === id);
 };
