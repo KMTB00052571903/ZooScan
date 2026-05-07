@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { AppLayout } from '../layout/AppLayout';
 import { PrimaryButton } from '../components/ui/PrimaryButton';
 import { SectionCard } from '../components/ui/SectionCard';
+import { useTranslation } from 'react-i18next';
 import { useSpecies } from '../context/SpeciesContext';
 import { addFavorite, removeFavorite, getFavorites } from '../services/api';
 
-// Mapa de emojis de peligrosidad para el nivel de riesgo
 const DANGER_COLOR: Record<string, string> = {
   Low:    '#52b788',
   Medium: '#f4a261',
@@ -14,11 +14,11 @@ const DANGER_COLOR: Record<string, string> = {
 
 export const AnimalDetailScreen = () => {
   const { selectedSpecies } = useSpecies();
-  const [isFavorite, setIsFavorite]     = useState(false);
-  const [favLoading, setFavLoading]     = useState(false);
-  const [checkingFav, setCheckingFav]   = useState(true);
+  const { t } = useTranslation();
+  const [isFavorite, setIsFavorite]   = useState(false);
+  const [favLoading, setFavLoading]   = useState(false);
+  const [checkingFav, setCheckingFav] = useState(true);
 
-  // Verificar si el animal ya está en favoritos al montar
   useEffect(() => {
     if (!selectedSpecies) { setCheckingFav(false); return; }
 
@@ -26,7 +26,7 @@ export const AnimalDetailScreen = () => {
       .then(favs => {
         setIsFavorite(favs.some(f => f.id === selectedSpecies.id));
       })
-      .catch(() => { /* sin conexión: mostrar sin estado */ })
+      .catch(() => {})
       .finally(() => setCheckingFav(false));
   }, [selectedSpecies?.id]);
 
@@ -42,7 +42,7 @@ export const AnimalDetailScreen = () => {
         setIsFavorite(true);
       }
     } catch {
-      // Fallo silencioso — el ícono vuelve a su estado anterior
+      // silent — icon reverts
     } finally {
       setFavLoading(false);
     }
@@ -51,7 +51,7 @@ export const AnimalDetailScreen = () => {
   if (!selectedSpecies) {
     return (
       <AppLayout title="Animal Detail">
-        <p className="detail-empty">No animal selected. Scan a QR code first.</p>
+        <p className="detail-empty">{t('animal.noSelection')}</p>
       </AppLayout>
     );
   }
@@ -62,7 +62,6 @@ export const AnimalDetailScreen = () => {
     <AppLayout title="Animal Detail">
       <div className="detail-container">
 
-        {/* Encabezado con nombre y botón de favorito */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
           <h1 className="detail-name" style={{ margin: 0 }}>{selectedSpecies.name}</h1>
           <button
@@ -77,13 +76,12 @@ export const AnimalDetailScreen = () => {
               transition: 'transform 0.2s',
               transform: isFavorite ? 'scale(1.15)' : 'scale(1)'
             }}
-            title={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+            title={isFavorite ? t('animal.removeFavorite') : t('animal.addFavorite')}
           >
             {isFavorite ? '❤️' : '🤍'}
           </button>
         </div>
 
-        {/* Nombre científico */}
         {selectedSpecies.species && (
           <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '13px', fontStyle: 'italic', margin: '0 0 12px' }}>
             {selectedSpecies.species}
@@ -99,21 +97,20 @@ export const AnimalDetailScreen = () => {
 
         <p className="detail-description">{selectedSpecies.description}</p>
 
-        <PrimaryButton>View AR Model</PrimaryButton>
+        <PrimaryButton>{t('animal.viewAR')}</PrimaryButton>
 
-        <SectionCard title="Habitat">
+        <SectionCard title={t('animal.habitat')}>
           {selectedSpecies.habitat}
         </SectionCard>
 
-        <SectionCard title="Danger level">
+        <SectionCard title={t('animal.dangerLevel')}>
           <span style={{ color: dangerColor, fontWeight: 600 }}>
             {selectedSpecies.danger_level}
           </span>
         </SectionCard>
 
-        {/* Fun facts — enriquecidos con la API Ninjas */}
         {selectedSpecies.fun_facts.length > 0 && (
-          <SectionCard title="Fun Facts">
+          <SectionCard title={t('animal.funFacts')}>
             <ul style={{ paddingLeft: '18px', margin: 0, lineHeight: '1.8' }}>
               {selectedSpecies.fun_facts.map((fact, i) => (
                 <li key={i} style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px' }}>

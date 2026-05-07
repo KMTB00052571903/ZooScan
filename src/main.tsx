@@ -5,7 +5,7 @@ import App from './App.tsx';
 import { ThemeProvider }  from './context/ThemeContext.tsx';
 import { AuthProvider }   from './context/AuthContext.tsx';
 import { SpeciesProvider } from './context/SpeciesContext.tsx';
-import './styles/styles.css';
+import './i18n';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -3,12 +3,12 @@ import { AppLayout } from '../layout/AppLayout';
 import { StatCard } from '../components/ui/StatCard';
 import { FavoriteCard } from '../components/ui/FavoriteCard';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useSpecies } from '../context/SpeciesContext';
 import { useAuth } from '../context/AuthContext';
 import { getProfile, getFavorites, type UserProfile } from '../services/api';
 import type { Species } from '../models/Species';
 
-// Emoji por categoría de animal
 const CATEGORY_EMOJI: Record<string, string> = {
   reptiles: '🦎',
   mammals:  '🐾',
@@ -19,6 +19,7 @@ export const ProfileScreen = () => {
   const navigate = useNavigate();
   const { setSelectedSpecies } = useSpecies();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const [profile, setProfile]     = useState<UserProfile | null>(null);
   const [favorites, setFavorites] = useState<Species[]>([]);
@@ -35,13 +36,13 @@ export const ProfileScreen = () => {
         setProfile(profileData);
         setFavorites(favsData);
       } catch {
-        setError('No se pudo cargar el perfil. Verifica tu conexión.');
+        setError(t('profile.errorProfile'));
       } finally {
         setLoading(false);
       }
     };
-    loadData();
-  }, []);
+    void loadData();
+  }, [t]);
 
   const handleFavoriteClick = (species: Species) => {
     setSelectedSpecies(species);
@@ -60,13 +61,12 @@ export const ProfileScreen = () => {
         <h2 className="profile-name">{displayName}</h2>
         <p className="profile-email">{displayEmail}</p>
 
-        {/* Estadísticas reales del backend */}
         <div className="profile-stats">
           {loading ? (
             <>
-              <StatCard value="—" label="Visited" />
-              <StatCard value="—" label="Favorites" />
-              <StatCard value="—" label="Scans" />
+              <StatCard value="—" label={t('profile.visited')} />
+              <StatCard value="—" label={t('profile.favorites')} />
+              <StatCard value="—" label={t('profile.scans')} />
             </>
           ) : error ? (
             <p style={{ color: '#fca5a5', fontSize: '13px', textAlign: 'center', width: '100%' }}>
@@ -74,21 +74,20 @@ export const ProfileScreen = () => {
             </p>
           ) : (
             <>
-              <StatCard value={String(profile?.stats.unique_animals ?? 0)} label="Visited" />
-              <StatCard value={String(profile?.stats.favorites ?? 0)}      label="Favorites" />
-              <StatCard value={String(profile?.stats.scans_total ?? 0)}    label="Scans" />
+              <StatCard value={String(profile?.stats.unique_animals ?? 0)} label={t('profile.visited')} />
+              <StatCard value={String(profile?.stats.favorites ?? 0)}      label={t('profile.favorites')} />
+              <StatCard value={String(profile?.stats.scans_total ?? 0)}    label={t('profile.scans')} />
             </>
           )}
         </div>
 
-        {/* Favoritos desde el backend */}
         <div className="favorites-header">
-          <h3 className="favorites-title">My favorites</h3>
+          <h3 className="favorites-title">{t('profile.myFavorites')}</h3>
         </div>
         <div className="favorites-list">
           {favorites.length === 0 && !loading ? (
             <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', textAlign: 'center', width: '100%' }}>
-              No tienes favoritos aún. ¡Escanea un animal y márcalo con ❤️!
+              {t('profile.noFavorites')}
             </p>
           ) : (
             favorites.map(fav => (
@@ -105,11 +104,11 @@ export const ProfileScreen = () => {
 
         <div className="profile-actions">
           <div className="action-item" onClick={() => navigate('/edit-profile')}>
-            <span>Edit profile</span>
+            <span>{t('profile.editProfile')}</span>
             <span className="action-arrow">›</span>
           </div>
           <div className="action-item">
-            <span>View history</span>
+            <span>{t('profile.viewHistory')}</span>
             <span className="action-arrow">›</span>
           </div>
         </div>

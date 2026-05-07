@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { signup as apiSignup } from '../../services/api';
 import './auth.css';
@@ -7,13 +8,14 @@ import './auth.css';
 export const SignupScreen = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { t } = useTranslation();
 
-  const [name, setName]         = useState('');
-  const [email, setEmail]       = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError]       = useState<string | null>(null);
+  const [name, setName]               = useState('');
+  const [email, setEmail]             = useState('');
+  const [password, setPassword]       = useState('');
+  const [error, setError]             = useState<string | null>(null);
   const [isDuplicate, setIsDuplicate] = useState(false);
-  const [loading, setLoading]   = useState(false);
+  const [loading, setLoading]         = useState(false);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,11 +28,10 @@ export const SignupScreen = () => {
       login(data.token, data.role, data.name);
       navigate('/home');
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error al crear la cuenta';
-      // 409 Conflict: email already registered
+      const msg = err instanceof Error ? err.message : t('auth.signup.errorDefault');
       if (msg.toLowerCase().includes('ya existe') || msg.includes('409')) {
         setIsDuplicate(true);
-        setError('Este correo ya está registrado.');
+        setError(t('auth.signup.errorExists'));
       } else {
         setError(msg);
       }
@@ -42,8 +43,8 @@ export const SignupScreen = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1 className="auth-title">Create Account</h1>
-        <p className="auth-subtitle">Join ZooScan today</p>
+        <h1 className="auth-title">{t('auth.signup.title')}</h1>
+        <p className="auth-subtitle">{t('auth.signup.subtitle')}</p>
 
         {error && (
           <div style={{
@@ -64,7 +65,7 @@ export const SignupScreen = () => {
                   onClick={() => navigate('/login')}
                   style={{ fontSize: '13px' }}
                 >
-                  ¿Ya tienes cuenta? Iniciar sesión →
+                  {t('auth.signup.errorExistsLink')}
                 </span>
               </div>
             )}
@@ -75,7 +76,7 @@ export const SignupScreen = () => {
           <input
             type="text"
             className="auth-input"
-            placeholder="Full name"
+            placeholder={t('auth.signup.name')}
             value={name}
             onChange={e => setName(e.target.value)}
             required
@@ -83,7 +84,7 @@ export const SignupScreen = () => {
           <input
             type="email"
             className="auth-input"
-            placeholder="Email address"
+            placeholder={t('auth.signup.email')}
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
@@ -91,7 +92,7 @@ export const SignupScreen = () => {
           <input
             type="password"
             className="auth-input"
-            placeholder="Password (min 6 characters)"
+            placeholder={t('auth.signup.password')}
             value={password}
             onChange={e => setPassword(e.target.value)}
             minLength={6}
@@ -99,14 +100,14 @@ export const SignupScreen = () => {
           />
 
           <button type="submit" className="auth-button" disabled={loading}>
-            {loading ? 'Creating account...' : 'Sign up'}
+            {loading ? t('auth.signup.submitting') : t('auth.signup.submit')}
           </button>
         </form>
 
         <div className="auth-footer">
-          Already have an account?{' '}
+          {t('auth.signup.hasAccount')}{' '}
           <span className="auth-link" onClick={() => navigate('/login')}>
-            Log in
+            {t('auth.signup.login')}
           </span>
         </div>
       </div>

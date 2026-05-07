@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Html5Qrcode } from 'html5-qrcode';
 import { AppLayout } from '../layout/AppLayout';
 import { QrCodeIcon } from '../components/ui/icons/QrCodeIcon';
@@ -9,6 +10,7 @@ import { getAnimalByQrCode, registerScan } from '../services/api';
 export const QRScreen = () => {
   const navigate  = useNavigate();
   const { setSelectedSpecies } = useSpecies();
+  const { t } = useTranslation();
 
   const [scanning, setScanning]     = useState(false);
   const [loading, setLoading]       = useState(false);
@@ -16,10 +18,8 @@ export const QRScreen = () => {
   const [manualCode, setManualCode] = useState('');
   const [badge, setBadge]           = useState<string | null>(null);
 
-  // Referencia al escáner para poder detenerlo al desmontar
   const scannerRef = useRef<Html5Qrcode | null>(null);
 
-  // Detener la cámara limpiamente cuando el componente se desmonta
   useEffect(() => {
     return () => {
       if (scannerRef.current) {
@@ -30,47 +30,39 @@ export const QRScreen = () => {
     };
   }, []);
 
-  // Procesa el código QR detectado: busca el animal y registra el escaneo
   const handleQrDetected = async (code: string) => {
-    if (loading) return; // Evitar doble disparo
+    if (loading) return;
     setLoading(true);
     setError(null);
 
-    // Detener la cámara antes de navegar
     if (scannerRef.current) {
       try {
         await scannerRef.current.stop();
         scannerRef.current.clear();
         scannerRef.current = null;
         setScanning(false);
-      } catch { /* ignore cleanup errors */ }
+      } catch { /* ignore cleanup */ }
     }
 
     try {
-      // Obtener datos del animal desde el backend
       const animal = await getAnimalByQrCode(code);
-
-      // Registrar el escaneo y verificar si ganó un badge
       const scanResult = await registerScan(code);
       if (scanResult.badge) {
         setBadge(scanResult.badge);
         setTimeout(() => setBadge(null), 4000);
       }
-
       setSelectedSpecies(animal);
       navigate('/animal');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'QR no reconocido');
+      setError(err instanceof Error ? err.message : t('qr.notFound'));
       setLoading(false);
     }
   };
 
-  // Inicia el escáner de cámara con html5-qrcode
   const startScanning = async () => {
     setError(null);
     setScanning(true);
 
-    // Esperar a que el DOM actualice y el div#qr-reader exista
     await new Promise(r => setTimeout(r, 100));
 
     try {
@@ -78,18 +70,18 @@ export const QRScreen = () => {
       scannerRef.current = scanner;
 
       await scanner.start(
-        { facingMode: 'environment' }, // cámara trasera en móvil
+        { facingMode: 'environment' },
         { fps: 10, qrbox: { width: 240, height: 240 } },
-        (decodedText) => { handleQrDetected(decodedText); },
-        () => { /* frame sin QR — es normal, no loguear */ }
+        (decodedText) => { void handleQrDetected(decodedText); },
+        () => {}
       );
     } catch (err) {
       setScanning(false);
       const msg = err instanceof Error ? err.message : '';
       if (msg.includes('permission') || msg.includes('NotAllowed')) {
-        setError('Permiso de cámara denegado. Actívalo en la configuración del navegador.');
+        setError(t('qr.cameraPermission'));
       } else {
-        setError('No se pudo acceder a la cámara. Usa el input manual.');
+        setError(t('qr.cameraError'));
       }
     }
   };
@@ -109,18 +101,15 @@ export const QRScreen = () => {
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (manualCode.trim()) {
-      handleQrDetected(manualCode.trim().toUpperCase());
+      void handleQrDetected(manualCode.trim().toUpperCase());
     }
   };
 
   return (
     <AppLayout title="QR scanning">
       <div className="qr-container">
-        <p className="qr-description">
-          When you approach an exhibit, make sure to scan its respective QR code for special information.
-        </p>
+        <p className="qr-description">{t('qr.description')}</p>
 
-        {/* Badge ganado */}
         {badge && (
           <div style={{
             background: 'linear-gradient(135deg, #8b5a3c, #d4a574)',
@@ -133,11 +122,10 @@ export const QRScreen = () => {
             fontSize: '15px',
             boxShadow: '0 4px 20px rgba(139,90,60,0.4)'
           }}>
-            🏅 ¡Badge desbloqueado: {badge}!
+            {t('qr.badge', { badge })}
           </div>
         )}
 
-        {/* Error */}
         {error && (
           <div style={{
             background: 'rgba(220,38,38,0.15)',
@@ -153,24 +141,16 @@ export const QRScreen = () => {
           </div>
         )}
 
-        {/* Loading */}
         {loading && (
-          <div style={{
-            textAlign: 'center',
-            padding: '20px',
-            color: '#52b788',
-            fontSize: '14px'
-          }}>
-            🔍 Buscando información del animal...
+          <div style={{ textAlign: 'center', padding: '20px', color: '#52b788', fontSize: '14px' }}>
+            {t('qr.searching')}
           </div>
         )}
 
-        {/* Frame del escáner de cámara */}
         {!loading && (
           <>
             {scanning ? (
               <div style={{ position: 'relative', marginBottom: '16px' }}>
-                {/* html5-qrcode renderiza el video dentro de este div */}
                 <div id="qr-reader" style={{ width: '100%', borderRadius: '16px', overflow: 'hidden' }} />
                 <button
                   onClick={stopScanning}
@@ -187,7 +167,7 @@ export const QRScreen = () => {
                     fontSize: '14px'
                   }}
                 >
-                  ✕ Cancelar escaneo
+                  {t('qr.cancelScan')}
                 </button>
               </div>
             ) : (
@@ -203,12 +183,11 @@ export const QRScreen = () => {
                 </div>
 
                 <button className="scan-btn" onClick={startScanning}>
-                  📷 Scan QR Code
+                  {t('qr.scan')}
                 </button>
               </>
             )}
 
-            {/* Fallback para desktop o cuando no hay cámara */}
             {!scanning && (
               <form onSubmit={handleManualSubmit} style={{ marginTop: '16px' }}>
                 <div style={{
@@ -217,14 +196,14 @@ export const QRScreen = () => {
                   textAlign: 'center',
                   marginBottom: '8px'
                 }}>
-                  O ingresa el código manualmente (para demo)
+                  {t('qr.manualHint')}
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <input
                     type="text"
                     value={manualCode}
                     onChange={e => setManualCode(e.target.value)}
-                    placeholder="Ej: ANIMAL_IGUANA_01"
+                    placeholder={t('qr.manualPlaceholder')}
                     style={{
                       flex: 1,
                       padding: '10px 14px',
@@ -259,16 +238,15 @@ export const QRScreen = () => {
           </>
         )}
 
-        {/* Steps indicator — preservado del diseño original */}
         <div className="steps-indicator">
           <div className="step active">1</div>
-          <div className="step-label active">Home</div>
+          <div className="step-label active">{t('qr.step1')}</div>
           <div className="step-line"></div>
           <div className="step active">2</div>
-          <div className="step-label active">QR Code Scanner</div>
+          <div className="step-label active">{t('qr.step2')}</div>
           <div className="step-line"></div>
           <div className="step">3</div>
-          <div className="step-label">Help</div>
+          <div className="step-label">{t('qr.step3')}</div>
         </div>
       </div>
     </AppLayout>

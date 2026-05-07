@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { login as apiLogin } from '../../services/api';
 import './auth.css';
@@ -7,6 +8,7 @@ import './auth.css';
 export const LoginScreen = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { t } = useTranslation();
 
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +25,7 @@ export const LoginScreen = () => {
       login(data.token, data.role, data.name);
       navigate('/home');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al iniciar sesión');
+      setError(err instanceof Error ? err.message : t('auth.login.errorDefault'));
     } finally {
       setLoading(false);
     }
@@ -32,8 +34,8 @@ export const LoginScreen = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1 className="auth-title">Welcome back</h1>
-        <p className="auth-subtitle">Log in to ZooScan</p>
+        <h1 className="auth-title">{t('auth.login.title')}</h1>
+        <p className="auth-subtitle">{t('auth.login.subtitle')}</p>
 
         {error && (
           <div style={{
@@ -54,7 +56,7 @@ export const LoginScreen = () => {
           <input
             type="email"
             className="auth-input"
-            placeholder="Email address"
+            placeholder={t('auth.login.email')}
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
@@ -62,18 +64,17 @@ export const LoginScreen = () => {
           <input
             type="password"
             className="auth-input"
-            placeholder="Password"
+            placeholder={t('auth.login.password')}
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
           />
 
           <button type="submit" className="auth-button" disabled={loading}>
-            {loading ? 'Logging in...' : 'Log in'}
+            {loading ? t('auth.login.submitting') : t('auth.login.submit')}
           </button>
         </form>
 
-        {/* Credenciales de prueba para la demo */}
         <div style={{
           marginTop: '12px',
           padding: '10px',
@@ -84,13 +85,13 @@ export const LoginScreen = () => {
           textAlign: 'center',
           lineHeight: '1.6'
         }}>
-          Demo: user@zoo.com / user123
+          {t('auth.login.demo')}
         </div>
 
         <div className="auth-footer">
-          Don't have an account?{' '}
+          {t('auth.login.noAccount')}{' '}
           <span className="auth-link" onClick={() => navigate('/signup')}>
-            Sign up
+            {t('auth.login.signup')}
           </span>
         </div>
       </div>
