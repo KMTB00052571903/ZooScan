@@ -10,6 +10,7 @@ import { SignupScreen } from './pages/auth/SignupScreen';
 import { EditProfileScreen } from './pages/EditProfileScreen';
 import { HomeScreen } from './pages/HomeScreen';
 import { CollectionScreen } from './pages/CollectionScreen';
+import { AnimalsPage } from './pages/AnimalsPage';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
       <Route path="/settings" element={<SettingsScreen />} />
       <Route path="/scan" element={<ScanScreen />} />
       <Route path="/collection" element={<CollectionScreen />} />
+      <Route path="/animals" element={<AnimalsPage />} />
     </Routes>
   );
 }
