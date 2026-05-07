@@ -1,14 +1,12 @@
 import { AppLayout } from '../layout/AppLayout';
 import { SectionCard } from '../components/ui/SectionCard';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 
 export const SettingsScreen = () => {
-  const navigate  = useNavigate();
-  const { logout, user } = useAuth();
+  const navigate = useNavigate();
 
   const handleSignOut = () => {
-    logout();          // Limpia token del localStorage
+    console.log('Sign out clicked');
     navigate('/login');
   };
 
@@ -18,6 +16,7 @@ export const SettingsScreen = () => {
 
         <p className="settings-subtitle">Configure your app experience</p>
 
+        {/* Preferences Section */}
         <SectionCard title="Preferences">
           <div className="settings-item">
             <span>Notifications</span>
@@ -33,13 +32,8 @@ export const SettingsScreen = () => {
           </div>
         </SectionCard>
 
+        {/* Account Section */}
         <SectionCard title="Account">
-          {user && (
-            <div className="settings-item">
-              <span>Logged in as</span>
-              <span className="settings-value" style={{ fontSize: '12px' }}>{user.name}</span>
-            </div>
-          )}
           <div className="settings-item">
             <span>Privacy and security</span>
             <span className="settings-arrow">➡️</span>
@@ -50,6 +44,7 @@ export const SettingsScreen = () => {
           </div>
         </SectionCard>
 
+        {/* About Section */}
         <SectionCard title="About">
           <div className="settings-item">
             <span>Version</span>
@@ -61,9 +56,8 @@ export const SettingsScreen = () => {
           </div>
         </SectionCard>
 
-        <button className="signout-btn" onClick={handleSignOut}>
-          ➡️ Sign out
-        </button>
+        {/* Sign Out Button */}
+        <button className="signout-btn" onClick={handleSignOut}>➡️ Sign out</button>
 
       </div>
     </AppLayout>

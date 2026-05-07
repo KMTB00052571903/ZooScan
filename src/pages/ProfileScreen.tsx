@@ -1,108 +1,105 @@
-import { useState, useEffect } from 'react';
 import { AppLayout } from '../layout/AppLayout';
 import { StatCard } from '../components/ui/StatCard';
 import { FavoriteCard } from '../components/ui/FavoriteCard';
 import { useNavigate } from 'react-router-dom';
 import { useSpecies } from '../context/SpeciesContext';
-import { useAuth } from '../context/AuthContext';
-import { getProfile, getFavorites, type UserProfile } from '../services/api';
+import { useUser } from '../context/UserContext';
 import type { Species } from '../models/Species';
-
-// Emoji por categoría de animal
-const CATEGORY_EMOJI: Record<string, string> = {
-  reptiles: '🦎',
-  mammals:  '🐾',
-  birds:    '🦅'
-};
 
 export const ProfileScreen = () => {
   const navigate = useNavigate();
   const { setSelectedSpecies } = useSpecies();
-  const { user } = useAuth();
+  const { xp, level, badges, scannedAnimals } = useUser();
+  const xpForNextLevel = 150;
+  const xpInCurrentLevel = xp % xpForNextLevel;
+  const xpPercentage = (xpInCurrentLevel / xpForNextLevel) * 100;
 
-  const [profile, setProfile]     = useState<UserProfile | null>(null);
-  const [favorites, setFavorites] = useState<Species[]>([]);
-  const [loading, setLoading]     = useState(true);
-  const [error, setError]         = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [profileData, favsData] = await Promise.all([
-          getProfile(),
-          getFavorites()
-        ]);
-        setProfile(profileData);
-        setFavorites(favsData);
-      } catch {
-        setError('No se pudo cargar el perfil. Verifica tu conexión.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, []);
-
-  const handleFavoriteClick = (species: Species) => {
-    setSelectedSpecies(species);
+  const handleFavoriteClick = (speciesMock: Species) => {
+    setSelectedSpecies(speciesMock);
     navigate('/animal');
   };
-
-  const displayName  = profile?.name  ?? user?.name  ?? 'Usuario';
-  const displayEmail = profile?.email ?? '';
-  const firstLetter  = displayName.charAt(0).toUpperCase();
 
   return (
     <AppLayout title="Profile">
       <div className="profile-container">
 
-        <div className="profile-avatar">{firstLetter}</div>
-        <h2 className="profile-name">{displayName}</h2>
-        <p className="profile-email">{displayEmail}</p>
+        <div className="profile-avatar">U</div>
+        <h2 className="profile-name">User</h2>
+        <p className="profile-email">user@email.com</p>
 
-        {/* Estadísticas reales del backend */}
-        <div className="profile-stats">
-          {loading ? (
-            <>
-              <StatCard value="—" label="Visited" />
-              <StatCard value="—" label="Favorites" />
-              <StatCard value="—" label="Scans" />
-            </>
-          ) : error ? (
-            <p style={{ color: '#fca5a5', fontSize: '13px', textAlign: 'center', width: '100%' }}>
-              {error}
-            </p>
-          ) : (
-            <>
-              <StatCard value={String(profile?.stats.unique_animals ?? 0)} label="Visited" />
-              <StatCard value={String(profile?.stats.favorites ?? 0)}      label="Favorites" />
-              <StatCard value={String(profile?.stats.scans_total ?? 0)}    label="Scans" />
-            </>
-          )}
+        {/* XP Progress Bar */}
+        <div className="xp-container">
+          <div className="xp-header">
+            <span className="xp-level">Level {level}</span>
+            <span className="xp-amount">{xpInCurrentLevel} / {xpForNextLevel} XP</span>
+          </div>
+          <div className="xp-bar-bg">
+            <div className="xp-bar-fill" style={{ width: `${xpPercentage}%` }}></div>
+          </div>
         </div>
 
-        {/* Favoritos desde el backend */}
+        {/* Badges */}
+        {badges.length > 0 && (
+          <div style={{ width: '100%', marginBottom: '1rem' }}>
+            <h3 className="favorites-title" style={{ marginBottom: '0.75rem' }}>My Badges</h3>
+            <div className="badges-container">
+              {badges.map(badge => (
+                <div key={badge} className="badge">{badge}</div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Stats */}
+        <div className="profile-stats">
+          <StatCard value={scannedAnimals.length.toString()} label="Scanned" />
+          <StatCard value="12" label="Favorites" />
+          <StatCard value="8" label="Hours" />
+        </div>
+
         <div className="favorites-header">
           <h3 className="favorites-title">My favorites</h3>
         </div>
         <div className="favorites-list">
-          {favorites.length === 0 && !loading ? (
-            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', textAlign: 'center', width: '100%' }}>
-              No tienes favoritos aún. ¡Escanea un animal y márcalo con ❤️!
-            </p>
-          ) : (
-            favorites.map(fav => (
-              <FavoriteCard
-                key={fav.id}
-                name={fav.name}
-                type={fav.category.charAt(0).toUpperCase() + fav.category.slice(1)}
-                emoji={CATEGORY_EMOJI[fav.category] ?? '🐾'}
-                onClick={() => handleFavoriteClick(fav)}
-              />
-            ))
-          )}
+          <FavoriteCard
+            name="Green iguana"
+            type="Reptiles"
+            emoji="🦎"
+            onClick={() => handleFavoriteClick({
+              id: "iguana",
+              name: "Green iguana",
+              habitat: "Tropical rainforest",
+              dangerLevel: "Low",
+              description: "The green iguana is a large, arboreal, mostly herbivorous species of lizard of the genus Iguana native to the Caribbean."
+            })}
+          />
+          <FavoriteCard
+            name="African lion"
+            type="Mammals"
+            emoji="🦁"
+            onClick={() => handleFavoriteClick({
+              id: "lion",
+              name: "African lion",
+              habitat: "Savannah",
+              dangerLevel: "High",
+              description: "The lion is a large cat of the genus Panthera native to Africa and India. It has a muscular, deep-chested body and a prominent mane."
+            })}
+          />
+          <FavoriteCard
+            name="Golden eagle"
+            type="Birds"
+            emoji="🦅"
+            onClick={() => handleFavoriteClick({
+              id: "eagle",
+              name: "Golden eagle",
+              habitat: "Mountains",
+              dangerLevel: "Medium",
+              description: "The golden eagle is a bird of prey living in the Northern Hemisphere. It is the most widely distributed species of eagle."
+            })}
+          />
         </div>
 
+        {/* Actions */}
         <div className="profile-actions">
           <div className="action-item" onClick={() => navigate('/edit-profile')}>
             <span>Edit profile</span>

@@ -1,53 +1,22 @@
-import { useState, useEffect } from 'react';
 import { AppLayout } from '../layout/AppLayout';
 import { useNavigate } from 'react-router-dom';
 import { FavoriteCard } from '../components/ui/FavoriteCard';
 import { useSpecies } from '../context/SpeciesContext';
-import { getFavorites, getAnimals } from '../services/api';
 import type { Species } from '../models/Species';
 import { QrCodeIcon } from '../components/ui/icons/QrCodeIcon';
-
-const CATEGORY_EMOJI: Record<string, string> = {
-  reptiles: '🦎',
-  mammals:  '🐾',
-  birds:    '🦅'
-};
 
 export const HomeScreen = () => {
   const navigate = useNavigate();
   const { setSelectedSpecies } = useSpecies();
 
-  const [favorites, setFavorites]       = useState<Species[]>([]);
-  const [categoryAnimals, setCategoryAnimals] = useState<Record<string, number>>({
-    reptiles: 0, mammals: 0, birds: 0
-  });
-
-  // Cargar favoritos y conteo de animales por categoría al montar
-  useEffect(() => {
-    getFavorites()
-      .then(setFavorites)
-      .catch(() => { /* sin conexión: mostrar lista vacía */ });
-
-    getAnimals()
-      .then(animals => {
-        const counts = animals.reduce((acc, a) => {
-          acc[a.category] = (acc[a.category] ?? 0) + 1;
-          return acc;
-        }, {} as Record<string, number>);
-        setCategoryAnimals(counts);
-      })
-      .catch(() => {});
-  }, []);
-
-  const handleFavoriteClick = (species: Species) => {
-    setSelectedSpecies(species);
+  const handleFavoriteClick = (speciesMock: Species) => {
+    setSelectedSpecies(speciesMock);
     navigate('/animal');
   };
 
   return (
     <AppLayout title="Home">
       <div className="home-container">
-
         <h1 className="home-title">Explore the exhibits</h1>
         <p className="home-subtitle">
           Discover exclusive information about each exhibition
@@ -65,62 +34,80 @@ export const HomeScreen = () => {
 
         <h2 className="categories-title">Categories</h2>
 
+        {/* Reptiles */}
         <div className="category-card">
           <div className="category-icon" style={{ backgroundColor: '#418B75' }}>
             <div className="category-icon-inner"></div>
           </div>
           <div className="category-info">
             <h4 style={{ color: '#1B4D3E' }}>Reptiles</h4>
-            <p>{categoryAnimals.reptiles || '—'} species · Tropical habitats</p>
+            <p>Discover the fascinating world of reptiles</p>
           </div>
         </div>
 
+        {/* Mammals */}
         <div className="category-card">
           <div className="category-icon" style={{ backgroundColor: '#A9D4C2' }}>
             <div className="category-icon-inner"></div>
           </div>
           <div className="category-info">
             <h4 style={{ color: '#1B4D3E' }}>Mammals</h4>
-            <p>{categoryAnimals.mammals || '—'} species · Global diversity</p>
+            <p>Explore the diversity of mammals</p>
           </div>
         </div>
 
+        {/* Birds */}
         <div className="category-card">
           <div className="category-icon" style={{ backgroundColor: '#75A9EA' }}>
             <div className="category-icon-inner"></div>
           </div>
           <div className="category-info">
             <h4 style={{ color: '#1B4D3E' }}>Birds</h4>
-            <p>{categoryAnimals.birds || '—'} species · Sky masters</p>
+            <p>Meet the most incredible bird species</p>
           </div>
         </div>
 
-        {/* Favoritos del usuario desde el backend */}
+        {/* My favorites */}
         <div className="favorites-header" style={{ marginTop: '1rem' }}>
           <h3 className="favorites-title">My favorites</h3>
         </div>
         <div className="favorites-list">
-          {favorites.length === 0 ? (
-            <p style={{
-              color: 'rgba(255,255,255,0.4)',
-              fontSize: '13px',
-              textAlign: 'center',
-              width: '100%',
-              padding: '8px'
-            }}>
-              Scan animals and mark them ❤️ to see them here
-            </p>
-          ) : (
-            favorites.map(fav => (
-              <FavoriteCard
-                key={fav.id}
-                name={fav.name}
-                type={fav.category.charAt(0).toUpperCase() + fav.category.slice(1)}
-                emoji={CATEGORY_EMOJI[fav.category] ?? '🐾'}
-                onClick={() => handleFavoriteClick(fav)}
-              />
-            ))
-          )}
+          <FavoriteCard
+            name="Green iguana"
+            type="Reptiles"
+            emoji="🦎"
+            onClick={() => handleFavoriteClick({
+              id: "iguana",
+              name: "Green iguana",
+              habitat: "Tropical rainforest",
+              dangerLevel: "Low",
+              description: "The green iguana is a large, arboreal, mostly herbivorous species of lizard of the genus Iguana native to the Caribbean."
+            })}
+          />
+          <FavoriteCard
+            name="African lion"
+            type="Mammals"
+            emoji="🦁"
+            onClick={() => handleFavoriteClick({
+              id: "lion",
+              name: "African lion",
+              habitat: "Savannah",
+              dangerLevel: "High",
+              description: "The lion is a large cat of the genus Panthera native to Africa and India. It has a muscular, deep-chested body and a prominent mane."
+            })}
+          />
+          <FavoriteCard
+            name="Golden eagle"
+            type="Birds"
+            emoji="🦅"
+            onClick={() => handleFavoriteClick({
+              id: "eagle",
+              name: "Golden eagle",
+              habitat: "Mountains",
+              dangerLevel: "Medium",
+              description: "The golden eagle is a bird of prey living in the Northern Hemisphere. It is the most widely distributed species of eagle."
+            })}
+          />
         </div>
 
       </div>
