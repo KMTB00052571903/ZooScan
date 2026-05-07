@@ -2,8 +2,8 @@ import { AppLayout } from '../layout/AppLayout';
 import { StatCard } from '../components/ui/StatCard';
 import { FavoriteCard } from '../components/ui/FavoriteCard';
 import { useNavigate } from 'react-router-dom';
-import { useSpecies } from '../context/SpeciesContext';
-import { useUser } from '../context/UserContext';
+import { useSpecies } from '../context/useSpecies';
+import { useUser } from '../context/useUser';
 import type { Species } from '../models/Species';
 
 export const ProfileScreen = () => {

@@ -1,13 +1,7 @@
-import { createContext, useContext, useState } from 'react';
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Species } from '../models/Species';
-
-interface SpeciesContextType {
-  selectedSpecies: Species | null;
-  setSelectedSpecies: (species: Species | null) => void;
-}
-
-const SpeciesContext = createContext<SpeciesContextType | undefined>(undefined);
+import { SpeciesContext } from './useSpecies';
 
 export const SpeciesProvider = ({ children }: { children: ReactNode }) => {
   const [selectedSpecies, setSelectedSpecies] = useState<Species | null>(null);
@@ -17,12 +11,4 @@ export const SpeciesProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </SpeciesContext.Provider>
   );
-};
-
-export const useSpecies = () => {
-  const context = useContext(SpeciesContext);
-  if (context === undefined) {
-    throw new Error('useSpecies must be used within a SpeciesProvider');
-  }
-  return context;
 };

@@ -1,32 +1,17 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-
-interface AuthUser {
-  name: string;
-  role: 'visitor' | 'staff';
-}
-
-interface AuthContextType {
-  token: string | null;
-  user: AuthUser | null;
-  isAuthenticated: boolean;
-  login: (token: string, role: 'visitor' | 'staff', name: string) => void;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { AuthContext } from './useAuth';
+import type { AuthUser } from './useAuth';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  // Al iniciar, leer el token guardado del localStorage
   const [token, setToken] = useState<string | null>(() =>
     localStorage.getItem('zooscan_token')
   );
   const [user, setUser] = useState<AuthUser | null>(() => {
     const saved = localStorage.getItem('zooscan_user');
-    return saved ? JSON.parse(saved) : null;
+    return saved ? JSON.parse(saved) as AuthUser : null;
   });
 
-  // Sincronizar con localStorage cuando cambia el token
   useEffect(() => {
     if (token) {
       localStorage.setItem('zooscan_token', token);
@@ -54,10 +39,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth debe usarse dentro de AuthProvider');
-  return context;
 };

@@ -1,7 +1,7 @@
 import { AppLayout } from '../layout/AppLayout';
-import { useUser } from '../context/UserContext';
+import { useUser } from '../context/useUser';
 import { ZOO_CATALOG } from '../data/animals';
-import { useSpecies } from '../context/SpeciesContext';
+import { useSpecies } from '../context/useSpecies';
 import { useNavigate } from 'react-router-dom';
 
 export const CollectionScreen = () => {

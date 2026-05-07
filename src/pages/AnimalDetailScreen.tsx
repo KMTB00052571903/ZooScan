@@ -1,7 +1,7 @@
 import { AppLayout } from '../layout/AppLayout';
 import { PrimaryButton } from '../components/ui/PrimaryButton';
 import { SectionCard } from '../components/ui/SectionCard';
-import { useSpecies } from '../context/SpeciesContext';
+import { useSpecies } from '../context/useSpecies';
 
 export const AnimalDetailScreen = () => {
   const { selectedSpecies } = useSpecies();

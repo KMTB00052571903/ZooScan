@@ -1,7 +1,7 @@
 import { AppLayout } from '../layout/AppLayout';
 import { QrCodeIcon } from '../components/ui/icons/QrCodeIcon';
 import { useState } from 'react';
-import { useUser } from '../context/UserContext';
+import { useUser } from '../context/useUser';
 import { ZOO_CATALOG } from '../data/animals';
 
 export const QRScreen = () => {

@@ -1,7 +1,7 @@
 import { AppLayout } from '../layout/AppLayout';
 import { useNavigate } from 'react-router-dom';
 import { FavoriteCard } from '../components/ui/FavoriteCard';
-import { useSpecies } from '../context/SpeciesContext';
+import { useSpecies } from '../context/useSpecies';
 import type { Species } from '../models/Species';
 import { QrCodeIcon } from '../components/ui/icons/QrCodeIcon';
 
