@@ -70,7 +70,7 @@ export const HomeScreen = () => {
             <div className="category-icon-inner"></div>
           </div>
           <div className="category-info">
-            <h4 style={{ color: '#1B4D3E' }}>Reptiles</h4>
+            <h4>Reptiles</h4>
             <p>{categoryAnimals.reptiles || '—'} species · Tropical habitats</p>
           </div>
         </div>
@@ -80,7 +80,7 @@ export const HomeScreen = () => {
             <div className="category-icon-inner"></div>
           </div>
           <div className="category-info">
-            <h4 style={{ color: '#1B4D3E' }}>Mammals</h4>
+            <h4>Mammals</h4>
             <p>{categoryAnimals.mammals || '—'} species · Global diversity</p>
           </div>
         </div>
@@ -90,7 +90,7 @@ export const HomeScreen = () => {
             <div className="category-icon-inner"></div>
           </div>
           <div className="category-info">
-            <h4 style={{ color: '#1B4D3E' }}>Birds</h4>
+            <h4>Birds</h4>
             <p>{categoryAnimals.birds || '—'} species · Sky masters</p>
           </div>
         </div>

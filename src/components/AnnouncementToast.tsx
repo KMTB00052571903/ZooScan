@@ -17,9 +17,11 @@ export const AnnouncementToast = () => {
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    // Conectar al namespace /visitors para recibir anuncios del staff
-    const socket = io('/visitors', {
-      transports: ['websocket', 'polling']
+    // En dev conectamos directo al backend (Vite proxy no maneja bien WS de Socket.IO).
+    // En producción usamos la misma origin.
+    const SOCKET_URL = import.meta.env.DEV ? 'http://localhost:4000' : '';
+    const socket = io(`${SOCKET_URL}/visitors`, {
+      transports: ['polling', 'websocket']
     });
 
     socket.on('announcement:new', (data: ToastMessage) => {

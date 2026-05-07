@@ -12,11 +12,13 @@ export const SignupScreen = () => {
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [error, setError]       = useState<string | null>(null);
+  const [isDuplicate, setIsDuplicate] = useState(false);
   const [loading, setLoading]   = useState(false);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setIsDuplicate(false);
     setLoading(true);
 
     try {
@@ -24,7 +26,14 @@ export const SignupScreen = () => {
       login(data.token, data.role, data.name);
       navigate('/home');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al crear la cuenta');
+      const msg = err instanceof Error ? err.message : 'Error al crear la cuenta';
+      // 409 Conflict: email already registered
+      if (msg.toLowerCase().includes('ya existe') || msg.includes('409')) {
+        setIsDuplicate(true);
+        setError('Este correo ya está registrado.');
+      } else {
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -48,6 +57,17 @@ export const SignupScreen = () => {
             textAlign: 'center'
           }}>
             {error}
+            {isDuplicate && (
+              <div style={{ marginTop: '8px' }}>
+                <span
+                  className="auth-link"
+                  onClick={() => navigate('/login')}
+                  style={{ fontSize: '13px' }}
+                >
+                  ¿Ya tienes cuenta? Iniciar sesión →
+                </span>
+              </div>
+            )}
           </div>
         )}
 

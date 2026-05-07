@@ -2,10 +2,12 @@ import { AppLayout } from '../layout/AppLayout';
 import { SectionCard } from '../components/ui/SectionCard';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 export const SettingsScreen = () => {
   const navigate  = useNavigate();
   const { logout, user } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
 
   const handleSignOut = () => {
     logout();          // Limpia token del localStorage
@@ -29,7 +31,14 @@ export const SettingsScreen = () => {
           </div>
           <div className="settings-item">
             <span>Dark mode</span>
-            <span className="settings-value">🟢</span>
+            <button
+              className={`theme-toggle${isDark ? ' active' : ''}`}
+              onClick={toggleTheme}
+              aria-label="Toggle dark mode"
+              aria-pressed={isDark}
+            >
+              <span className="theme-toggle-thumb" />
+            </button>
           </div>
         </SectionCard>
 
