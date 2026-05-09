@@ -4,6 +4,7 @@ import { QrCodeIcon } from '../components/ui/icons/QrCodeIcon';
 import { SettingsIcon } from '../components/ui/icons/SettingsIcon';
 import { ProfileIcon } from '../components/ui/icons/ProfileIcon';
 import { CollectionIcon } from '../components/ui/icons/CollectionIcon';
+import { MapIcon } from '../components/ui/icons/MapIcon';
 
 interface AppLayoutProps {
   title: string;
@@ -23,6 +24,9 @@ export const AppLayout = ({ title, children }: AppLayoutProps) => {
             </button>
             <button className="icon-btn" onClick={() => navigate('/collection')} style={{ background: 'transparent', border: 'none', marginLeft: '10px' }}>
               <CollectionIcon size={20} />
+            </button>
+            <button className="icon-btn" onClick={() => navigate('/map')} style={{ background: 'transparent', border: 'none', marginLeft: '10px' }}>
+              <MapIcon size={20} />
             </button>
             <div style={{ flex: 1 }}></div>
             <button className="icon-btn" onClick={() => navigate('/profile')} style={{ background: 'transparent', border: 'none' }}>
@@ -50,6 +54,7 @@ export const AppLayout = ({ title, children }: AppLayoutProps) => {
       case 'Animal Detail':
       case 'Edit Profile':
       case 'My Collection':
+      case 'Zoo Map':
         return (
           <>
             <button className="icon-btn" onClick={() => navigate(-1)}>←</button>
