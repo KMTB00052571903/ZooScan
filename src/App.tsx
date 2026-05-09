@@ -11,6 +11,8 @@ import { EditProfileScreen } from './pages/EditProfileScreen';
 import { HomeScreen } from './pages/HomeScreen';
 import { CollectionScreen } from './pages/CollectionScreen';
 import { AnimalsPage } from './pages/AnimalsPage';
+import { MapScreen } from './pages/MapScreen';
+import { ZoneDetailScreen } from './pages/ZoneDetailScreen';
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
       <Route path="/scan" element={<ScanScreen />} />
       <Route path="/collection" element={<CollectionScreen />} />
       <Route path="/animals" element={<AnimalsPage />} />
+      <Route path="/map" element={<MapScreen />} />
+      <Route path="/zone/:zoneId" element={<ZoneDetailScreen />} />
     </Routes>
   );
 }
