@@ -685,3 +685,9 @@ body {
   color: var(--text-muted);
   line-height: 1.4;
 }
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
