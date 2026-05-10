@@ -4,6 +4,7 @@ export interface Species {
   habitat: string;
   description: string;
   dangerLevel: string;
+  zoneId?: string;
   // Optional backend fields
   species?: string;
   image_url?: string;
