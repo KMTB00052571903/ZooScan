@@ -6,10 +6,11 @@ export interface AuthUser {
 }
 
 export interface AuthContextType {
-  token: string | null;
   user: AuthUser | null;
   isAuthenticated: boolean;
-  login: (token: string, role: 'visitor' | 'staff', name: string) => void;
+  loading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 

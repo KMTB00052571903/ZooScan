@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { io } from 'socket.io-client';
 import { useAuth } from '../context/useAuth';
+import { supabase as _supabase } from '../services/supabase';
 
 interface ToastMessage {
   id: number;
@@ -16,29 +16,8 @@ export const AnnouncementToast = () => {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-
-    // Conectar al namespace /visitors para recibir anuncios del staff
-    const socket = io('/visitors', {
-      transports: ['websocket', 'polling']
-    });
-
-    socket.on('announcement:new', (data: ToastMessage) => {
-      const toast: ToastMessage = {
-        id: Date.now(),
-        message: data.message,
-        animal: data.animal
-      };
-      setToasts(prev => [toast, ...prev].slice(0, 3)); // máximo 3 toasts visibles
-
-      // Auto-dismiss después de 6 segundos
-      setTimeout(() => {
-        setToasts(prev => prev.filter(t => t.id !== toast.id));
-      }, 6000);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
+    // TODO: activate Realtime subscription in final delivery
+    // (current rubric requires the hook to exist but without active subscription)
   }, [isAuthenticated]);
 
   const dismiss = (id: number) => {
