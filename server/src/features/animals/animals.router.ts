@@ -12,9 +12,9 @@ import { authMiddleware } from '../../middlewares/authMiddleware'
 export const router = Router()
 
 // Public
-router.get('/', getAnimalsController)
+router.get('/', authMiddleware, getAnimalsController)
 // router.get('/me', authMiddleware, getMyStoreController)
-router.get('/:id', getAnimalByIdController)
+router.get('/:id', authMiddleware, getAnimalByIdController)
 
 // Protected
 // router.post('/', authMiddleware, createStoreController)
