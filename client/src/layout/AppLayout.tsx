@@ -49,18 +49,6 @@ export const AppLayout = ({ title, children }: AppLayoutProps) => {
             </div>
           </>
         );
-      case 'StaffProfile':
-        return (
-          <>
-            <button className="icon-btn" onClick={() => navigate('/dashboard')}>←</button>
-            <h1 className="header-title">{title}</h1>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button className="icon-btn" onClick={() => navigate('/dashboard/settings')}>
-                <SettingsIcon size={20} />
-              </button>
-            </div>
-          </>
-        );        
       case 'Settings':
       case 'QR scanning':
       case 'Animal Detail':

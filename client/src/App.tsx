@@ -13,9 +13,6 @@ import { CollectionScreen } from './pages/CollectionScreen';
 import { AnimalsPage } from './pages/AnimalsPage';
 import { MapScreen } from './pages/MapScreen';
 import { ZoneDetailScreen } from './pages/ZoneDetailScreen';
-import { Dashboard } from './pages/staff/Dashboard';
-import { StaffSettings } from './pages/staff/StaffSettings';
-import { StaffProfile } from './pages/staff/StaffProfile';
 
 function App() {
   return (
@@ -34,9 +31,6 @@ function App() {
       <Route path="/animals" element={<AnimalsPage />} />
       <Route path="/map" element={<MapScreen />} />
       <Route path="/zone/:zoneId" element={<ZoneDetailScreen />} />
-      <Route path="/dashboard" element={<Dashboard/>}/>
-      <Route path="/dashboard/settings" element={<StaffSettings/>}/>
-      <Route path="/dashboard/profile" element={<StaffProfile />} />
     </Routes>
   );
 }

@@ -32,34 +32,18 @@ body {
   background-attachment: fixed;
 }
 
-@media screen and (width <= 999px){
-    #root {
-    width: 100%;
-    max-width: 480px; /* Mobile app feel */
-    min-height: 100vh;
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(10px);
-    box-shadow: var(--glass-shadow);
-    border-left: 1px solid var(--glass-border);
-    border-right: 1px solid var(--glass-border);
-    display: flex;
-    flex-direction: column;
-  }
+#root {
+  width: 100%;
+  max-width: 480px; /* Mobile app feel */
+  min-height: 100vh;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--glass-shadow);
+  border-left: 1px solid var(--glass-border);
+  border-right: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
 }
-
-@media screen and (width >= 1000px){
-    #root {
-    width: 100%;
-    max-width: 1000px;
-    min-height: 100vh;
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(10px);
-    box-shadow: var(--glass-shadow);
-    border-left: 1px solid var(--glass-border);
-    border-right: 1px solid var(--glass-border);
-    display: flex;
-    flex-direction: column;
-  }}
 
 /* =========================================
    LAYOUT & HEADER
