@@ -20,7 +20,7 @@ export const ZoneDetailScreen = () => {
       <AppLayout title="Zone">
         <div style={{ textAlign: 'center', marginTop: '4rem' }}>
           <p>Zone not found</p>
-          <button onClick={() => navigate('/map')} className="primary-button">Back to Map</button>
+          <button onClick={() => navigate(-1)} className="primary-button">Back to Map</button>
         </div>
       </AppLayout>
     );
@@ -148,7 +148,7 @@ export const ZoneDetailScreen = () => {
         </div>
 
         <button 
-          onClick={() => navigate('/map')} 
+          onClick={() => navigate(-1)} 
           className="signout-btn" 
           style={{ 
             border: '1px solid var(--glass-border)', 
