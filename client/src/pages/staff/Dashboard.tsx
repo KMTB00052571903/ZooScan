@@ -56,7 +56,7 @@ const navigate = useNavigate()
                     <h2>Notify visitors about an upcoming event!</h2>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque a  fringilla erat, sed convallis ligula. Vestibulum ullamcorper nibh id  mauris sollicitudin.</p>
                     </div>
-                <button className="notif-btn">Manage Event</button>
+                <button className="notif-btn" onClick={() => navigate('/dashboard/event')}>Manage Event</button>
             </div>
 
                 <h2>Dashboard Overview</h2>
