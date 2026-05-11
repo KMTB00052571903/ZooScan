@@ -1,0 +1,14 @@
+{
+  "name": "zooscan-monorepo",
+  "private": true,
+  "workspaces": [
+    "client/visitor",
+    "client/staff",
+    "server"
+  ],
+  "scripts": {
+    "dev:visitor": "npm run dev --workspace=client/visitor",
+    "build:visitor": "npm run build --workspace=client/visitor",
+    "dev:staff": "npm run dev --workspace=client/staff"
+  }
+}
