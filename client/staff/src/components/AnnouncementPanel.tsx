@@ -7,12 +7,17 @@ interface Props {
   animals: Animal[];
 }
 
+function formatTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString('es-CO', {
+    hour: '2-digit', minute: '2-digit',
+  });
+}
+
 export const AnnouncementPanel = ({ animals }: Props) => {
-  const { createAnnouncement } = useAnnouncements();
+  const { createAnnouncement, recentAnnouncements } = useAnnouncements();
   const [message, setMessage]   = useState('');
   const [animalId, setAnimalId] = useState<number | null>(null);
   const [sending, setSending]   = useState(false);
-  const [sent, setSent]         = useState(false);
   const [error, setError]       = useState<string | null>(null);
 
   const handleSend = async () => {
@@ -22,12 +27,12 @@ export const AnnouncementPanel = ({ animals }: Props) => {
     try {
       await createAnnouncement(message.trim(), animalId);
       toast.success('¡Anuncio enviado a todos los visitantes!');
-      setSent(true);
       setMessage('');
       setAnimalId(null);
-      setTimeout(() => setSent(false), 4000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al enviar anuncio');
+      const msg = err instanceof Error ? err.message : 'Error al enviar anuncio';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSending(false);
     }
@@ -72,22 +77,50 @@ export const AnnouncementPanel = ({ animals }: Props) => {
 
       {error && (
         <div style={{
-          marginTop: '10px',
-          fontSize: '13px',
-          color: '#fca5a5',
-          background: 'rgba(239,68,68,0.1)',
-          borderRadius: '8px',
-          padding: '8px 12px'
+          marginTop: '10px', fontSize: '13px', color: '#fca5a5',
+          background: 'rgba(239,68,68,0.1)', borderRadius: '8px', padding: '8px 12px',
         }}>
           {error}
         </div>
       )}
 
-      {sent && (
-        <div className="announcement-success">
-          ✅ Anuncio enviado a todos los visitantes conectados
-        </div>
-      )}
+      {/* Last 5 announcements */}
+      <div style={{ marginTop: '16px' }}>
+        <p style={{
+          fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px',
+          color: 'rgba(226,238,255,0.35)', fontWeight: 600, marginBottom: '8px',
+        }}>
+          Últimos anuncios
+        </p>
+
+        {recentAnnouncements.length === 0 ? (
+          <p style={{ fontSize: '13px', color: 'rgba(226,238,255,0.25)', fontStyle: 'italic' }}>
+            No hay anuncios enviados aún.
+          </p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {recentAnnouncements.map(a => (
+              <div
+                key={a.id}
+                style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+                  gap: '8px',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.07)',
+                  borderRadius: '8px',
+                  padding: '8px 12px',
+                  fontSize: '13px',
+                }}
+              >
+                <span style={{ color: 'rgba(226,238,255,0.75)', flex: 1 }}>{a.message}</span>
+                <span style={{ color: 'rgba(226,238,255,0.3)', whiteSpace: 'nowrap', flexShrink: 0, fontSize: '11px' }}>
+                  {formatTime(a.created_at)}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

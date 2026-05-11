@@ -1,12 +1,22 @@
 import { supabase } from './supabase';
 import type { DashboardStats, TopAnimal, ScanByHour, ActiveVisitor, Animal } from '../types';
 import type { FeedEvent } from '../components/LiveActivityFeed';
+import type { Announcement } from '../context/useAnnouncements';
+
+// Explicit FK hints required because scans.animal_id → animals and scans.user_id → profiles
+const SCAN_SELECT_TODAY = `
+  user_id,
+  animal_id,
+  created_at,
+  animals:animal_id(id, name, category, image_url),
+  profiles:user_id(name)
+`;
 
 type RawScan = {
   user_id: string;
-  animal_id: number;
+  animal_id: string;
   created_at: string;
-  animals: { id: number; name: string; category: string; image_url: string } | null;
+  animals: { id: string; name: string; category: string; image_url: string } | null;
   profiles: { name: string } | null;
 };
 
@@ -20,29 +30,24 @@ function hourAgo(): string {
   return new Date(Date.now() - 60 * 60 * 1000).toISOString();
 }
 
-function extractAnimal(scan: RawScan) {
-  const a = scan.animals;
-  return a ?? null;
-}
-
 export async function getStats(): Promise<DashboardStats> {
   const today = todayStart();
   const lastHour = hourAgo();
 
-  // Scans de hoy con joins a animals y profiles
-  const { data: rawToday } = await supabase
+  const { data: rawToday, error: errToday } = await supabase
     .from('scans')
-    .select('user_id, animal_id, created_at, animals(id, name, category, image_url), profiles(name)')
+    .select(SCAN_SELECT_TODAY)
     .gte('created_at', today)
     .order('created_at', { ascending: false });
 
+  if (errToday) console.error('[statsService] scans today error:', errToday.message);
   const todayScans = (rawToday ?? []) as unknown as RawScan[];
 
   const scans_today = todayScans.length;
   const unique_visitors_today = new Set(todayScans.map(s => s.user_id)).size;
   const scans_last_hour = todayScans.filter(s => s.created_at >= lastHour).length;
 
-  // scans_by_hour — distribución por hora de hoy (24 slots)
+  // scans_by_hour — 24 slots
   const hourMap = new Map<string, number>();
   for (let i = 0; i < 24; i++) hourMap.set(String(i).padStart(2, '0') + ':00', 0);
   for (const s of todayScans) {
@@ -52,9 +57,9 @@ export async function getStats(): Promise<DashboardStats> {
   const scans_by_hour: ScanByHour[] = Array.from(hourMap.entries()).map(([hour, count]) => ({ hour, count }));
 
   // top_animal_today
-  const todayMap = new Map<number, { name: string; image_url: string; count: number }>();
+  const todayMap = new Map<string, { name: string; image_url: string; count: number }>();
   for (const s of todayScans) {
-    const a = extractAnimal(s);
+    const a = s.animals;
     if (!a) continue;
     const prev = todayMap.get(a.id) ?? { name: a.name, image_url: a.image_url, count: 0 };
     todayMap.set(a.id, { ...prev, count: prev.count + 1 });
@@ -65,8 +70,7 @@ export async function getStats(): Promise<DashboardStats> {
   // active_visitors
   const visitorMap = new Map<string, { name: string; count: number }>();
   for (const s of todayScans) {
-    const p = s.profiles;
-    const name = p?.name ?? 'Visitante';
+    const name = s.profiles?.name ?? 'Visitante';
     const prev = visitorMap.get(s.user_id) ?? { name, count: 0 };
     visitorMap.set(s.user_id, { name: prev.name, count: prev.count + 1 });
   }
@@ -74,21 +78,23 @@ export async function getStats(): Promise<DashboardStats> {
     .sort((a, b) => b.count - a.count)
     .map((v, i) => ({ id: i + 1, name: v.name, scans_hoy: v.count }));
 
-  // top_animals (todos los tiempos) — segunda query
-  const { data: rawAll } = await supabase
+  // top_animals (all time)
+  const { data: rawAll, error: errAll } = await supabase
     .from('scans')
-    .select('animal_id, animals(id, name, category, image_url)');
+    .select('animal_id, animals:animal_id(id, name, category, image_url)');
 
+  if (errAll) console.error('[statsService] scans all error:', errAll.message);
   const allScans = (rawAll ?? []) as unknown as Pick<RawScan, 'animal_id' | 'animals'>[];
-  const allMap = new Map<number, { animal: TopAnimal; count: number }>();
+
+  const allMap = new Map<string, { animal: TopAnimal; count: number }>();
   for (const s of allScans) {
     const a = s.animals;
     if (!a) continue;
     const prev = allMap.get(a.id);
     if (!prev) {
       allMap.set(a.id, {
-        animal: { id: a.id, name: a.name, category: a.category, image_url: a.image_url, scan_count: 0 },
-        count: 1
+        animal: { id: Number(a.id), name: a.name, category: a.category, image_url: a.image_url, scan_count: 0 },
+        count: 1,
       });
     } else {
       prev.count++;
@@ -111,15 +117,17 @@ export async function getStats(): Promise<DashboardStats> {
 }
 
 export async function getRecentScans(limit = 30): Promise<FeedEvent[]> {
-  const { data: raw } = await supabase
+  const { data: raw, error } = await supabase
     .from('scans')
-    .select('user_id, animal_id, created_at, animals(id, name, category, image_url), profiles(name)')
+    .select(SCAN_SELECT_TODAY)
     .order('created_at', { ascending: false })
     .limit(limit);
 
+  if (error) console.error('[statsService] getRecentScans error:', error.message);
+
   return ((raw ?? []) as unknown as RawScan[]).map((s, i) => ({
     animal: {
-      id: s.animals?.id ?? i,
+      id: Number(s.animals?.id ?? i),
       name: s.animals?.name ?? 'Animal desconocido',
       category: s.animals?.category ?? '',
       image_url: s.animals?.image_url ?? '',
@@ -138,4 +146,15 @@ export async function getAnimalsForPanel(): Promise<Animal[]> {
     .select('id, name, category')
     .order('name');
   return (data ?? []) as Animal[];
+}
+
+export async function getRecentAnnouncements(limit = 5): Promise<Announcement[]> {
+  const { data, error } = await supabase
+    .from('announcements')
+    .select('id, message, created_at, animal_id')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) console.error('[statsService] getRecentAnnouncements error:', error.message);
+  return (data ?? []) as Announcement[];
 }
