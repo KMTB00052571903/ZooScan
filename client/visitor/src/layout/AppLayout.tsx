@@ -55,6 +55,12 @@ export const AppLayout = ({ title, children }: AppLayoutProps) => {
       case 'Edit Profile':
       case 'My Collection':
       case 'Zoo Map':
+      case 'Animals':
+      case '🦎 Reptiles':
+      case '🦁 Mammals':
+      case '🦅 Birds':
+      case 'Terms & Conditions':
+      case 'Privacy Policy':
         return (
           <>
             <button className="icon-btn" onClick={() => navigate(-1)}>←</button>

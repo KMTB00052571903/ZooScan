@@ -1,15 +1,50 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-dark: #f8fafc; 
-  --bg-panel: rgba(255, 255, 255, 0.85); 
-  --text-main: #0f172a; 
-  --text-muted: #64748b; 
-  --accent-primary: #10b981; 
+  --bg-dark: #f8fafc;
+  --bg-panel: rgba(255, 255, 255, 0.85);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent-primary: #10b981;
   --accent-secondary: #059669;
   --accent-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  --glass-border: rgba(0, 0, 0, 0.06); 
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04); 
+  --glass-border: rgba(0, 0, 0, 0.06);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
+}
+
+html.dark {
+  --bg-dark: #0f172a;
+  --bg-panel: rgba(30, 41, 59, 0.9);
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+html.dark body {
+  background-color: var(--bg-dark);
+  background-image:
+    radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.08), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(5, 150, 105, 0.08), transparent 25%);
+}
+
+html.dark #root {
+  background: rgba(15, 23, 42, 0.98);
+  backdrop-filter: none;
+}
+
+html.dark .app-header {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 0) 100%);
+}
+
+html.dark .section-card,
+html.dark .settings-container > div {
+  background: var(--bg-panel);
+  border-color: var(--glass-border);
+}
+
+html.dark .favorite-card:hover {
+  background: var(--bg-panel);
 }
 
 * {

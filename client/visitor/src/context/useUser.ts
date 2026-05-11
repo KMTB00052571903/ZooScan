@@ -1,6 +1,8 @@
 import { createContext, useContext } from 'react';
 
 export interface UserContextType {
+  email: string;
+  favoritesCount: number;
   xp: number;
   level: number;
   scannedAnimals: string[];

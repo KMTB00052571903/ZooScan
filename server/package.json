@@ -1,0 +1,27 @@
+{
+  "name": "zooscan-server",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/app.ts",
+    "build": "tsc -b",
+    "start": "node dist/app.js"
+  },
+  "dependencies": {
+    "@hapi/boom": "^10.0.1",
+    "@supabase/supabase-js": "^2.105.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^5.2.1",
+    "serverless-http": "^3.2.0",
+    "socket.io": "^4.8.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.12.3",
+    "tsx": "^4.0.0",
+    "typescript": "~6.0.2"
+  }
+}

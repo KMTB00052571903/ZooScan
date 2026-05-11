@@ -7,7 +7,7 @@ export const speciesList: Species[] = [
     name: "León",
     species: "Panthera leo",
     habitat: "Sabana",
-    description: "El león es un mamífero carnívoro de la familia de los félidos. Es conocido por su melena y su rugido poderoso.",
+    description: "El león es un mamífero carnívoro de la familia de los félidos.",
     image_url: "",
     qr_code_id: "ANIMAL_LEON_01",
     danger_level: "High",
@@ -20,7 +20,7 @@ export const speciesList: Species[] = [
     name: "Elefante",
     species: "Loxodonta africana",
     habitat: "Sabana",
-    description: "El elefante es el mamífero terrestre más grande. Se caracteriza por su trompa larga y sus colmillos de marfil.",
+    description: "El elefante es el mamífero terrestre más grande.",
     image_url: "",
     qr_code_id: "ANIMAL_ELEFANTE_01",
     danger_level: "Medium",
@@ -33,7 +33,7 @@ export const speciesList: Species[] = [
     name: "Jirafa",
     species: "Giraffa camelopardalis",
     habitat: "Sabana",
-    description: "La jirafa es el animal más alto del mundo. Tiene un cuello largo que le permite alcanzar las hojas de los árboles altos.",
+    description: "La jirafa es el animal más alto del mundo.",
     image_url: "",
     qr_code_id: "ANIMAL_JIRAFA_01",
     danger_level: "Low",
@@ -52,9 +52,12 @@ export async function getAnimalsFromDB(): Promise<Species[]> {
     .from('animals')
     .select('id, name, species, habitat, description, image_url, qr_code_id, danger_level, category, fun_facts')
     .order('name');
+
+  console.log('[getAnimalsFromDB] data:', data, '| error:', error?.message ?? 'none');
+
   if (error) {
-    console.error('getAnimalsFromDB:', error.message);
-    return speciesList;
+    console.error('[getAnimalsFromDB] failed:', error.message);
+    return [];
   }
   return (data ?? []) as Species[];
 }

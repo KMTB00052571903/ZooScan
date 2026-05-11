@@ -8,19 +8,24 @@ import { useFavorites } from '../context/useFavorites';
 import type { Species } from '../models/Species';
 import { QrCodeIcon } from '../components/ui/icons/QrCodeIcon';
 
+const CATEGORY_EMOJI: Record<string, string> = {
+  reptiles: '🦎', mammals: '🦁', birds: '🦅',
+};
+
 const getCategoryEmoji = (animal: Species): string => {
-  if (animal.category === 'reptiles') return '🦎';
-  if (animal.category === 'birds')    return '🦅';
-  if (animal.category === 'mammals')  return '🦁';
+  if (animal.category) return CATEGORY_EMOJI[animal.category] ?? '🐾';
   const n = animal.name.toLowerCase();
-  if (n.includes('iguana'))  return '🦎';
-  if (n.includes('lion'))    return '🦁';
-  if (n.includes('eagle'))   return '🦅';
-  if (n.includes('frog'))    return '🐸';
-  if (n.includes('panda'))   return '🐼';
-  if (n.includes('chimp'))   return '🐒';
+  if (n.includes('iguana') || n.includes('snake') || n.includes('frog')) return '🦎';
+  if (n.includes('lion') || n.includes('panda') || n.includes('chimp')) return '🦁';
+  if (n.includes('eagle') || n.includes('toucan') || n.includes('bird')) return '🦅';
   return '🐾';
 };
+
+const CATEGORIES = [
+  { key: 'reptiles', label: 'Reptiles', emoji: '🦎', color: '#418B75', bg: 'rgba(65,139,117,0.12)', desc: 'Discover the fascinating world of reptiles' },
+  { key: 'mammals',  label: 'Mammals',  emoji: '🦁', color: '#A07850', bg: 'rgba(160,120,80,0.12)',  desc: 'Explore the diversity of mammals' },
+  { key: 'birds',    label: 'Birds',    emoji: '🦅', color: '#4A7BB5', bg: 'rgba(74,123,181,0.12)', desc: 'Meet the most incredible bird species' },
+];
 
 export const HomeScreen = () => {
   const navigate = useNavigate();
@@ -35,6 +40,7 @@ export const HomeScreen = () => {
           Discover exclusive information about each exhibition
         </p>
 
+        {/* QR scan card */}
         <div className="home-scan-card" onClick={() => navigate('/qr')}>
           <div className="home-scan-icon">
             <QrCodeIcon size={40} />
@@ -47,38 +53,25 @@ export const HomeScreen = () => {
 
         <h2 className="categories-title">Categories</h2>
 
-        {/* Reptiles */}
-        <div className="category-card">
-          <div className="category-icon" style={{ backgroundColor: '#418B75' }}>
-            <div className="category-icon-inner"></div>
+        {CATEGORIES.map(cat => (
+          <div
+            key={cat.key}
+            className="category-card"
+            onClick={() => navigate(`/animals/${cat.key}`)}
+            style={{ cursor: 'pointer' }}
+          >
+            <div
+              className="category-icon"
+              style={{ backgroundColor: cat.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <span style={{ fontSize: '1.8rem', lineHeight: 1 }}>{cat.emoji}</span>
+            </div>
+            <div className="category-info">
+              <h4 style={{ color: cat.color }}>{cat.label}</h4>
+              <p>{cat.desc}</p>
+            </div>
           </div>
-          <div className="category-info">
-            <h4 style={{ color: '#1B4D3E' }}>Reptiles</h4>
-            <p>Discover the fascinating world of reptiles</p>
-          </div>
-        </div>
-
-        {/* Mammals */}
-        <div className="category-card">
-          <div className="category-icon" style={{ backgroundColor: '#A9D4C2' }}>
-            <div className="category-icon-inner"></div>
-          </div>
-          <div className="category-info">
-            <h4 style={{ color: '#1B4D3E' }}>Mammals</h4>
-            <p>Explore the diversity of mammals</p>
-          </div>
-        </div>
-
-        {/* Birds */}
-        <div className="category-card">
-          <div className="category-icon" style={{ backgroundColor: '#75A9EA' }}>
-            <div className="category-icon-inner"></div>
-          </div>
-          <div className="category-info">
-            <h4 style={{ color: '#1B4D3E' }}>Birds</h4>
-            <p>Meet the most incredible bird species</p>
-          </div>
-        </div>
+        ))}
 
         {/* My favorites */}
         <div className="favorites-header" style={{ marginTop: '1rem' }}>
@@ -91,7 +84,7 @@ export const HomeScreen = () => {
           )}
           {favorites.map(animal => (
             <FavoriteCard
-              key={animal.id}
+              key={String(animal.id)}
               name={animal.name}
               type={animal.category ?? 'Animal'}
               emoji={getCategoryEmoji(animal)}
@@ -99,7 +92,6 @@ export const HomeScreen = () => {
             />
           ))}
         </div>
-
       </div>
     </AppLayout>
   );

@@ -3,33 +3,50 @@ import { AppLayout } from '../layout/AppLayout';
 import { SectionCard } from '../components/ui/SectionCard';
 import { PrimaryButton } from '../components/ui/PrimaryButton';
 import { useNavigate } from 'react-router-dom';
-import { getCurrentProfile, updateProfile } from '../services/profileService';
+import toast from 'react-hot-toast';
+import { supabase } from '../services/supabase';
 
 export const EditProfileScreen = () => {
   const navigate = useNavigate();
-  const [name, setName]         = useState('');
-  const [username, setUsername] = useState('');
-  const [loading, setLoading]   = useState(true);
-  const [saving, setSaving]     = useState(false);
-  const [error, setError]       = useState<string | null>(null);
+  const [name, setName]       = useState('');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving]   = useState(false);
+  const [error, setError]     = useState('');
 
   useEffect(() => {
-    getCurrentProfile()
-      .then(profile => {
-        if (profile) {
-          setName(profile.name);
-          setUsername(profile.username);
-        }
-      })
-      .catch(() => setError('Failed to load profile'))
-      .finally(() => setLoading(false));
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setLoading(false); return; }
+
+      const { data, error: dbError } = await supabase
+        .from('profiles')
+        .select('name')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (!dbError && data) {
+        setName(data.name ?? '');
+      }
+      setLoading(false);
+    };
+    void load();
   }, []);
 
   const handleSave = async () => {
-    setError(null);
+    setError('');
     setSaving(true);
     try {
-      await updateProfile({ name, username });
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const { error: dbError } = await supabase
+        .from('profiles')
+        .update({ name: name.trim() })
+        .eq('id', user.id);
+
+      if (dbError) throw dbError;
+
+      toast.success('Profile updated!');
       navigate('/profile');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save changes');
@@ -56,7 +73,7 @@ export const EditProfileScreen = () => {
             fontSize: '14px',
             marginBottom: '12px',
             textAlign: 'center',
-            width: '100%'
+            width: '100%',
           }}>
             {error}
           </div>
@@ -77,17 +94,6 @@ export const EditProfileScreen = () => {
                     value={name}
                     onChange={e => setName(e.target.value)}
                     placeholder="Your name"
-                  />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Username</label>
-                  <input
-                    type="text"
-                    className="auth-input"
-                    style={{ backgroundColor: 'var(--bg-dark)' }}
-                    value={username}
-                    onChange={e => setUsername(e.target.value)}
-                    placeholder="@username"
                   />
                 </div>
               </div>

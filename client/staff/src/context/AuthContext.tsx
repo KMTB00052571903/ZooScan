@@ -17,6 +17,17 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const resolveStaffUser = async (userId: string): Promise<AuthUser | null> => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('name, role')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (error || !data || data.role !== 'staff') return null;
+  return { name: data.name, role: 'staff' };
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user,    setUser]    = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -24,28 +35,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     let mounted = true;
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!mounted || !session) { setLoading(false); return; }
-      const { data: profile } = await supabase
-        .from('profiles').select('name, role').eq('id', session.user.id).single();
-      if (!mounted) return;
-      if (profile?.role === 'staff') setUser({ name: profile.name, role: 'staff' });
-      setLoading(false);
-    });
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      (event, session) => {
         if (!mounted) return;
-        if (!session) { setUser(null); return; }
-        const { data: profile } = await supabase
-          .from('profiles').select('name, role').eq('id', session.user.id).single();
-        if (!mounted) return;
-        if (profile?.role === 'staff') {
-          setUser({ name: profile.name, role: 'staff' });
-        } else {
+
+        if (!session) {
           setUser(null);
-          supabase.auth.signOut();
+          setLoading(false);
+          return;
         }
+
+        if (event === 'SIGNED_IN') return;
+
+        const userId = session.user.id;
+        setTimeout(async () => {
+          if (!mounted) return;
+          try {
+            const resolved = await resolveStaffUser(userId);
+            if (mounted) setUser(resolved);
+          } catch {
+            if (mounted) setUser(null);
+          } finally {
+            if (mounted) setLoading(false);
+          }
+        }, 0);
       }
     );
 
@@ -53,12 +66,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error, data } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
-    // onAuthStateChange verifica el rol y setea user (o hace signOut si no es staff)
+
+    const resolved = await resolveStaffUser(data.user.id);
+    if (!resolved) {
+      await supabase.auth.signOut();
+      throw new Error('Acceso denegado. Solo el personal autorizado puede ingresar.');
+    }
+
+    setUser(resolved);
+    setLoading(false);
   };
 
-  const logout = () => { supabase.auth.signOut(); };
+  const logout = () => {
+    setUser(null);
+    supabase.auth.signOut();
+    window.location.href = '/login';
+  };
 
   return (
     <AuthContext.Provider value={{ user, isAuthenticated: !!user, loading, signIn, logout }}>

@@ -10,12 +10,11 @@ export const AnimalARViewer = ({ modelPath, alt = '3D Animal Model', height = '4
       <model-viewer
         src={modelPath}
         alt={alt}
-        ar="true"
-        ar-modes="webxr scene-viewer quick-look"
-        camera-controls="true"
-        autoplay="true"
+        ar
+        camera-controls
+        autoplay
         shadow-intensity="1"
-        style={`width: 100%; height: ${height}; background: rgba(0,0,0,0.05);`}
+        style={{ width: '100%', height, background: 'rgba(0,0,0,0.05)' }}
       />
     </div>
   );

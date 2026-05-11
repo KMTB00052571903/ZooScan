@@ -15,8 +15,7 @@
     "react-dom": "^19.2.4",
     "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.14.0",
-    "recharts": "^2.12.7",
-    "zooscan-monorepo": "file:.."
+    "recharts": "^2.12.7"
   },
   "devDependencies": {
     "@types/node": "^24.12.2",

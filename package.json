@@ -9,6 +9,9 @@
   "scripts": {
     "dev:visitor": "npm run dev --workspace=client/visitor",
     "build:visitor": "npm run build --workspace=client/visitor",
-    "dev:staff": "npm run dev --workspace=client/staff"
+    "dev:staff": "npm run dev --workspace=client/staff",
+    "build:staff": "npm run build --workspace=client/staff",
+    "dev:server": "npm run dev --workspace=server",
+    "build:server": "npm run build --workspace=server"
   }
 }
