@@ -1,0 +1,41 @@
+import { AppLayout } from '../layout/AppLayout';
+import { PrimaryButton } from '../components/ui/PrimaryButton';
+import { SectionCard } from '../components/ui/SectionCard';
+import { useSpecies } from '../context/useSpecies';
+
+export const AnimalDetailScreen = () => {
+  const { selectedSpecies } = useSpecies();
+
+  if (!selectedSpecies) {
+    return (
+      <AppLayout title="Animal Detail">
+        <p className="detail-empty">No animal selected</p>
+      </AppLayout>
+    );
+  }
+
+  return (
+    <AppLayout title="Animal Detail">
+      <div className="detail-container">
+        <h1 className="detail-name">{selectedSpecies.name}</h1>
+        <img
+          src={"https://upload.wikimedia.org/wikipedia/commons/0/0b/Iguana_iguana_Portoviejo_02.jpg"}
+          className="detail-image"
+          alt={selectedSpecies.name}
+        />
+        <p className="detail-description">
+          {selectedSpecies.description}
+        </p>
+        <PrimaryButton>View AR Model</PrimaryButton>
+        <SectionCard title="Habitat">
+          {selectedSpecies.habitat}
+        </SectionCard>
+
+        <SectionCard title="Danger level">
+          {selectedSpecies.dangerLevel}
+        </SectionCard>
+
+      </div>
+    </AppLayout>
+  );
+};
