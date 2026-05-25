@@ -5,9 +5,9 @@ import { PrimaryButton } from '../components/ui/PrimaryButton';
 import { SectionCard } from '../components/ui/SectionCard';
 import { useSpecies } from '../context/useSpecies';
 import { useFavorites } from '../context/useFavorites';
+import apiClient from '../services/apiClient';
 
 // Maps qr_code_id → available GLB file in /public/models/
-// Only animals with a real matching model are listed here.
 const MODEL_MAP: Record<string, string> = {
   'ANIMAL_IGUANA_01': '/models/iguananew.glb',
   'ANIMAL_LION_01':   '/models/lion.glb',
@@ -21,6 +21,8 @@ export const AnimalDetailScreen = () => {
   const { selectedSpecies } = useSpecies();
   const { isFavorite, toggleFavorite } = useFavorites();
   const [showAR, setShowAR] = useState(false);
+  const [aiFacts, setAiFacts] = useState<string[]>([]);
+  const [loadingFacts, setLoadingFacts] = useState(false);
 
   if (!selectedSpecies) {
     return (
@@ -30,12 +32,25 @@ export const AnimalDetailScreen = () => {
     );
   }
 
-  // Use image_url directly from Supabase data; fall back to emoji placeholder only if truly absent.
   const imgSrc = selectedSpecies.image_url || null;
-
   const glbSrc = selectedSpecies.qr_code_id
     ? MODEL_MAP[selectedSpecies.qr_code_id] ?? null
     : null;
+
+  const generateFunFacts = async () => {
+    setLoadingFacts(true);
+    try {
+      const { data } = await apiClient.post<{ facts: string[] }>(
+        `/animals/${selectedSpecies.id}/fun-facts`
+      );
+      setAiFacts(data.facts);
+      toast.success('Datos curiosos generados con IA ✨');
+    } catch {
+      toast.error('No se pudieron generar datos curiosos');
+    } finally {
+      setLoadingFacts(false);
+    }
+  };
 
   return (
     <AppLayout title="Animal Detail">
@@ -58,13 +73,8 @@ export const AnimalDetailScreen = () => {
           </button>
         </div>
 
-        {/* Real image from Supabase */}
         {imgSrc ? (
-          <img
-            src={imgSrc}
-            className="detail-image"
-            alt={selectedSpecies.name}
-          />
+          <img src={imgSrc} className="detail-image" alt={selectedSpecies.name} />
         ) : (
           <div className="detail-image" style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -76,7 +86,6 @@ export const AnimalDetailScreen = () => {
 
         <p className="detail-description">{selectedSpecies.description}</p>
 
-        {/* View AR Model button — only shown when a GLB exists */}
         {glbSrc && (
           <PrimaryButton onClick={() => setShowAR(true)}>
             🦾 View 3D Model
@@ -99,9 +108,25 @@ export const AnimalDetailScreen = () => {
             </ul>
           </SectionCard>
         )}
+
+        {/* Botón de IA para fun facts */}
+        <PrimaryButton onClick={() => void generateFunFacts()} disabled={loadingFacts}>
+          {loadingFacts ? '⏳ Generando...' : '✨ Generar datos curiosos con IA'}
+        </PrimaryButton>
+
+        {aiFacts.length > 0 && (
+          <SectionCard title="✨ Datos curiosos (IA)">
+            <ul style={{ paddingLeft: '1.2rem', margin: 0 }}>
+              {aiFacts.map((fact, i) => (
+                <li key={i} style={{ marginBottom: '6px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                  {fact}
+                </li>
+              ))}
+            </ul>
+          </SectionCard>
+        )}
       </div>
 
-      {/* Full-screen 3D model modal */}
       {showAR && glbSrc && (
         <div
           style={{
@@ -116,7 +141,6 @@ export const AnimalDetailScreen = () => {
             <h2 style={{ color: '#fff', marginBottom: '1rem', fontSize: '1.3rem' }}>
               🦾 {selectedSpecies.name} — 3D Model
             </h2>
-            {/* model-viewer web component declared in vite-env.d.ts */}
             <model-viewer
               src={glbSrc}
               alt={selectedSpecies.name}

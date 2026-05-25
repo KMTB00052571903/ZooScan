@@ -17,8 +17,11 @@ import { MapScreen }          from './pages/MapScreen';
 import { ZoneDetailScreen }   from './pages/ZoneDetailScreen';
 import { TermsScreen }        from './pages/TermsScreen';
 import { PrivacyScreen }      from './pages/PrivacyScreen';
+import { useRealtime }        from './hooks/useRealtime';
 
 function App() {
+  useRealtime();
+
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />

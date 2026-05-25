@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import Boom from '@hapi/boom'
-import { getAnimalByIdService, getAnimalsService } from './animals.service'
+import { getAnimalByIdService, getAnimalsService, getAnimalFunFactsService } from './animals.service'
 
 const getIdFromParams = (params: Request['params']): string => {
   const id = params.id
@@ -18,4 +18,10 @@ export const getAnimalByIdController = async (req: Request, res: Response) => {
   const id = getIdFromParams(req.params)
   const animal = await getAnimalByIdService(id)
   return res.json(animal)
+}
+
+export const getAnimalFunFactsController = async (req: Request, res: Response) => {
+  const id = getIdFromParams(req.params)
+  const facts = await getAnimalFunFactsService(id)
+  return res.json({ facts })
 }

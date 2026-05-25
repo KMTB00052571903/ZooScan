@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { supabase } from '../services/supabase';
 import { useAuth } from './useAuth';
 import { UserContext } from './useUser';
+import apiClient from '../services/apiClient';
 
 const XP_PER_SCAN = 50;
 const XP_PER_LEVEL = 150;
@@ -10,12 +11,12 @@ const XP_PER_LEVEL = 150;
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated, user } = useAuth();
 
-  const [email, setEmail]                 = useState('');
+  const [email, setEmail]                   = useState('');
   const [favoritesCount, setFavoritesCount] = useState(0);
-  const [xp, setXp]                       = useState(0);
-  const [level, setLevel]                 = useState(1);
+  const [xp, setXp]                         = useState(0);
+  const [level, setLevel]                   = useState(1);
   const [scannedAnimals, setScannedAnimals] = useState<string[]>([]);
-  const [badges, setBadges]               = useState<string[]>([]);
+  const [badges, setBadges]                 = useState<string[]>([]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -31,7 +32,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     let mounted = true;
 
     const loadUserData = async () => {
-      // 1. Get session for email
       const { data: sessionData } = await supabase.auth.getSession();
       const sessionEmail = sessionData.session?.user?.email ?? '';
       if (mounted) setEmail(sessionEmail);
@@ -39,7 +39,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       const userId = sessionData.session?.user?.id;
       if (!userId) return;
 
-      // 2. Scans — count and ids for XP/gamification
       const { data: scansData } = await supabase
         .from('scans')
         .select('animal_id')
@@ -51,7 +50,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setXp(ids.length * XP_PER_SCAN);
       }
 
-      // 3. Favorites count
       const { count } = await supabase
         .from('favorites')
         .select('*', { count: 'exact', head: true })
@@ -64,13 +62,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     return () => { mounted = false; };
   }, [isAuthenticated, user]);
 
-  // Level up when XP increases
   useEffect(() => {
     const newLevel = Math.floor(xp / XP_PER_LEVEL) + 1;
     if (newLevel > level) setLevel(newLevel);
   }, [xp, level]);
 
-  // Badges
   useEffect(() => {
     const newBadges = [...badges];
     if (scannedAnimals.length >= 1 && !newBadges.includes('First Discovery'))
@@ -86,9 +82,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     if (scannedAnimals.includes(animalId)) return false;
     setScannedAnimals(prev => [...prev, animalId]);
     addXp(XP_PER_SCAN);
-    void supabase.auth.getUser().then(({ data: { user: u } }) => {
-      if (u) void supabase.from('scans').insert({ user_id: u.id, animal_id: animalId });
-    });
+    // Registra el scan a través del backend (no directo a Supabase)
+    void apiClient.post('/scans', { animal_id: animalId });
     return true;
   };
 

@@ -1,6 +1,9 @@
 import Boom from '@hapi/boom'
 import { supabase } from '../../config/supabase'
-import type {  Animal } from './animals.types'
+import type { Animal } from './animals.types'
+import Groq from 'groq-sdk'
+
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 export const getAnimalsService = async (): Promise<Animal[]> => {
   const { data, error } = await supabase.from('animals').select('*')
@@ -18,38 +21,26 @@ export const getAnimalByIdService = async (id: string): Promise<Animal> => {
   return data as Animal
 }
 
-// export const getAnimalByUserIdService = async (userId: string): Promise<Animal | null> => {
-//   const { data, error } = await supabase
-//     .from('animals')
-//     .select('*')
-//     .eq('userId', userId)
-//     .single()
-//   if (error || !data) return null
-//   return data as Animal
-// }
+export const getAnimalFunFactsService = async (id: string): Promise<string[]> => {
+  const animal = await getAnimalByIdService(id)
 
-// export const createStoreService = async (store: CreateStoreDTO): Promise<Store> => {
-//   const { data, error } = await supabase
-//     .from('stores')
-//     .insert([{ name: store.name, userId: store.userId }])
-//     .select()
-//     .single()
-//   if (error) throw Boom.badRequest(error.message)
-//   return data as Store
-// }
+  const response = await groq.chat.completions.create({
+    model: 'llama3-8b-8192',
+    messages: [
+      {
+        role: 'user',
+        content: `Genera 3 datos curiosos sobre ${animal.name} (${animal.species}) en español, cada uno de máximo 20 palabras`,
+      },
+    ],
+    max_tokens: 200,
+  })
 
-// export const updateStoreService = async (store: UpdateStoreDTO): Promise<Store> => {
-//   const { data, error } = await supabase
-//     .from('stores')
-//     .update({ name: store.name, isOpen: store.isOpen })
-//     .eq('id', store.id)
-//     .select()
-//     .single()
-//   if (error || !data) throw Boom.badRequest(error?.message ?? 'Update failed')
-//   return data as Store
-// }
+  const text = response.choices[0]?.message?.content ?? ''
+  const facts = text
+    .split('\n')
+    .filter((line) => line.trim().match(/^\d+[.)]/))
+    .map((line) => line.replace(/^\d+[.)]\s*/, '').trim())
+    .filter(Boolean)
 
-// export const deleteStoreService = async (id: string): Promise<void> => {
-//   const { error } = await supabase.from('stores').delete().eq('id', id)
-//   if (error) throw Boom.badRequest(error.message)
-// }
+  return facts.length > 0 ? facts : ['No se pudieron generar datos curiosos']
+}
