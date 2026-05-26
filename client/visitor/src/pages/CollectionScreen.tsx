@@ -5,14 +5,15 @@ import { useFavorites } from '../context/useFavorites';
 import { ZOO_CATALOG } from '../data/animals';
 import { useSpecies } from '../context/useSpecies';
 import { useNavigate } from 'react-router-dom';
+import type { Species } from '../models/Species';
 
 export const CollectionScreen = () => {
   const { scannedAnimals } = useUser();
   const { isFavorite, toggleFavorite } = useFavorites();
-  const { setSelectedSpecies } = useSpecies();
+  const { animals, setSelectedSpecies } = useSpecies();
   const navigate = useNavigate();
 
-  const handleAnimalClick = (animal: typeof ZOO_CATALOG[0], isUnlocked: boolean) => {
+  const handleAnimalClick = (animal: Species, isUnlocked: boolean) => {
     if (isUnlocked) {
       setSelectedSpecies(animal);
       navigate('/animal');
@@ -20,32 +21,37 @@ export const CollectionScreen = () => {
   };
 
   return (
-    <AppLayout title="My Collection">
+    <AppLayout title="My Collection" backRoute="/home">
       <div className="collection-container">
         <p className="collection-subtitle">
           Discover all the species in our zoo. Scanned animals: {scannedAnimals.length}/{ZOO_CATALOG.length}
         </p>
         
         <div className="collection-grid">
-          {ZOO_CATALOG.map((animal) => {
+          {ZOO_CATALOG.map((catalogAnimal) => {
+            const dbAnimal = animals.find(a => 
+              a.name.toLowerCase().includes(String(catalogAnimal.id).toLowerCase()) || 
+              a.qr_code_id?.toLowerCase().includes(String(catalogAnimal.id).toLowerCase())
+            );
+            const animal = dbAnimal || catalogAnimal;
             const isUnlocked = scannedAnimals.includes(String(animal.id));
             return (
               <div 
-                key={animal.id} 
+                key={catalogAnimal.id} 
                 className={`collection-card ${isUnlocked ? 'unlocked' : 'locked'}`}
                 onClick={() => handleAnimalClick(animal, isUnlocked)}
               >
                 <div className="collection-image-placeholder">
                   {isUnlocked ? (
                     <span className="collection-emoji">
-                      {animal.id === 'iguana' ? '🦎' : 
-                       animal.id === 'lion' ? '🦁' : 
-                       animal.id === 'eagle' ? '🦅' : 
-                       animal.id === 'elephant' ? '🐘' : 
-                       animal.id === 'penguin' ? '🐧' : 
-                       animal.id === 'tiger' ? '🐅' : 
-                       animal.id === 'turtle' ? '🐢' : 
-                       animal.id === 'macaw' ? '🦜' : '❓'}
+                      {catalogAnimal.id === 'iguana' ? '🦎' : 
+                       catalogAnimal.id === 'lion' ? '🦁' : 
+                       catalogAnimal.id === 'eagle' ? '🦅' : 
+                       catalogAnimal.id === 'elephant' ? '🐘' : 
+                       catalogAnimal.id === 'penguin' ? '🐧' : 
+                       catalogAnimal.id === 'tiger' ? '🐅' : 
+                       catalogAnimal.id === 'turtle' ? '🐢' : 
+                       catalogAnimal.id === 'macaw' ? '🦜' : '❓'}
                     </span>
                   ) : (
                     <span className="collection-question">?</span>

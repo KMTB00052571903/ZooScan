@@ -1,20 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { io } from 'socket.io-client';
+import toast from 'react-hot-toast';
 
-export interface RealtimeEvent {
-  id: string;
-  type: 'scan' | 'announcement' | 'visitor_join';
-  payload: Record<string, unknown>;
-  timestamp: string;
-}
-
-// TODO: wire Supabase Realtime subscription when backend channel is ready
-export const useRealtime = (): RealtimeEvent[] => {
-  const [events, setEvents] = useState<RealtimeEvent[]>([]);
-
+export const useRealtime = () => {
   useEffect(() => {
-    // Placeholder — no active subscription
-    return () => { setEvents([]); };
-  }, []);
+    const socket = io(import.meta.env.VITE_API_URL ?? 'http://localhost:3000');
+    socket.emit('join:visitor');
 
-  return events;
+    socket.on('announcement:new', (data: { message: string; animal_id?: string }) => {
+      toast(`📢 ${data.message}`, { duration: 5000 });
+    });
+
+    return () => { socket.disconnect(); };
+  }, []);
 };

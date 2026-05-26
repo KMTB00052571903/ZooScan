@@ -1,22 +1,13 @@
 import { Router } from 'express'
 import {
-  // createStoreController,
-  // deleteStoreController,
-  // getMyStoreController,
   getAnimalByIdController,
   getAnimalsController,
-  // updateStoreController,
+  getAnimalFunFactsController,
 } from './animals.controller'
 import { authMiddleware } from '../../middlewares/authMiddleware'
 
 export const router = Router()
 
-// Public
 router.get('/', authMiddleware, getAnimalsController)
-// router.get('/me', authMiddleware, getMyStoreController)
 router.get('/:id', authMiddleware, getAnimalByIdController)
-
-// Protected
-// router.post('/', authMiddleware, createStoreController)
-// router.patch('/:id', authMiddleware, updateStoreController)
-// router.delete('/:id', authMiddleware, deleteStoreController)
+router.post('/:id/fun-facts', authMiddleware, getAnimalFunFactsController)

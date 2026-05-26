@@ -9,9 +9,10 @@ import { MapIcon } from '../components/ui/icons/MapIcon';
 interface AppLayoutProps {
   title: string;
   children: ReactNode;
+  backRoute?: string;
 }
 
-export const AppLayout = ({ title, children }: AppLayoutProps) => {
+export const AppLayout = ({ title, children, backRoute }: AppLayoutProps) => {
   const navigate = useNavigate();
 
   const renderHeaderContent = () => {
@@ -63,13 +64,19 @@ export const AppLayout = ({ title, children }: AppLayoutProps) => {
       case 'Privacy Policy':
         return (
           <>
-            <button className="icon-btn" onClick={() => navigate(-1)}>←</button>
+            <button className="icon-btn" onClick={() => backRoute ? navigate(backRoute) : navigate(-1)}>←</button>
             <h1 className="header-title">{title}</h1>
             <div style={{ width: '40px' }}></div>
           </>
         );
       default:
-        return <h1 className="header-title">{title}</h1>;
+        return (
+          <>
+            <button className="icon-btn" onClick={() => backRoute ? navigate(backRoute) : navigate(-1)}>←</button>
+            <h1 className="header-title">{title}</h1>
+            <div style={{ width: '40px' }}></div>
+          </>
+        );
     }
   };
 
