@@ -10,7 +10,7 @@ export const ZoneDetailScreen = () => {
 
   if (!zone) {
     return (
-      <AppLayout title="Zona">
+      <AppLayout title="Zona" backRoute="/map">
         <div style={{ textAlign: 'center', marginTop: '4rem' }}>
           <p>Zona no encontrada</p>
           <button onClick={() => navigate('/map')} className="primary-button">Volver al Mapa</button>
@@ -20,7 +20,7 @@ export const ZoneDetailScreen = () => {
   }
 
   return (
-    <AppLayout title={zone.name}>
+    <AppLayout title={zone.name} backRoute="/map">
       <div className="detail-container">
         <div className="profile-avatar" style={{ background: zone.color, margin: '0 auto 1.5rem auto' }}>
           {zone.emoji}

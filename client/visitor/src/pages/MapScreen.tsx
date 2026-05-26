@@ -58,7 +58,7 @@ export const MapScreen = () => {
   };
 
   return (
-    <AppLayout title="Zoo Map">
+    <AppLayout title="Zoo Map" backRoute="/home">
       <div className="map-screen-container" style={{ position: 'relative', height: '100%', overflow: 'hidden', background: '#f0f0f0', borderRadius: '16px' }}>
         {/* Zoom Controls */}
         <div className="zoom-controls" style={{
