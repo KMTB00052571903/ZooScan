@@ -1,23 +1,30 @@
 import express from 'express'
 import cors from 'cors'
-import http from 'http'
 
 import { PORT } from './config'
 import { errorsMiddleware } from './middlewares/errorsMiddleware'
-import { setupSocket } from './socket'
 
-import { router as authRouter } from './features/auth/auth.router'
-import { router as animalsRouter } from './features/animals/animals.router'
-import { router as scanRouter } from './features/scan/scan.router'
-import { router as orderRouter } from './features/orders/order.router'
-import { router as usersRouter } from './features/users/users.router'
-import { router as favoritesRouter } from './features/favorites/favorites.router'
+import { router as authRouter }          from './features/auth/auth.router'
+import { router as animalsRouter }       from './features/animals/animals.router'
+import { router as scanRouter }          from './features/scan/scan.router'
+import { router as orderRouter }         from './features/orders/order.router'
+import { router as usersRouter }         from './features/users/users.router'
+import { router as favoritesRouter }     from './features/favorites/favorites.router'
 import { router as announcementsRouter } from './features/announcements/announcements.router'
 
 const app = express()
 
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174'],
+  credentials: true,
+}))
+
+// Log todas las requests entrantes
+app.use((req, _res, next) => {
+  console.log(`[server] ${req.method} ${req.path}`)
+  next()
+})
 
 app.get('/', (_req, res) => {
   res.json({
@@ -49,14 +56,21 @@ app.use('/api/announcements', announcementsRouter)
 
 app.use(errorsMiddleware)
 
-const server = http.createServer(app)
-setupSocket(server)
-
 if (process.env.NODE_ENV !== 'production') {
-  server.listen(PORT, () => {
+  app.listen(PORT, () => {
     console.log(`ZooScan server running on http://localhost:${PORT}`)
+    console.log('Rutas registradas:')
+    console.log('  GET    /api/animals')
+    console.log('  GET    /api/animals/:id')
+    console.log('  POST   /api/animals/:id/fun-facts  ← Groq')
+    console.log('  POST   /api/scans')
+    console.log('  GET    /api/users/me')
+    console.log('  GET    /api/favorites')
+    console.log('  POST   /api/favorites')
+    console.log('  DELETE /api/favorites/:animalId')
+    console.log('  GET    /api/announcements')
+    console.log('  POST   /api/announcements')
   })
 }
 
 export default app
-export { server }

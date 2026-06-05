@@ -5,9 +5,7 @@ import { PrimaryButton } from '../components/ui/PrimaryButton';
 import { SectionCard } from '../components/ui/SectionCard';
 import { useSpecies } from '../context/useSpecies';
 import { useFavorites } from '../context/useFavorites';
-import apiClient from '../services/apiClient';
 
-// Maps qr_code_id → available GLB file in /public/models/
 const MODEL_MAP: Record<string, string> = {
   'ANIMAL_IGUANA_01': '/models/iguananew.glb',
   'ANIMAL_LION_01':   '/models/lion.glb',
@@ -16,6 +14,16 @@ const MODEL_MAP: Record<string, string> = {
   'ANIMAL_CHIMP_01':  '/models/common_frog.glb',
   'ANIMAL_TUCAN_01':  '/models/snake_by_dino_raul.glb',
 };
+
+const FactsList = ({ facts }: { facts: string[] }) => (
+  <ul style={{ paddingLeft: '1.2rem', margin: 0 }}>
+    {facts.map((fact, i) => (
+      <li key={i} style={{ marginBottom: '6px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+        {fact}
+      </li>
+    ))}
+  </ul>
+);
 
 export const AnimalDetailScreen = () => {
   const { selectedSpecies } = useSpecies();
@@ -37,15 +45,45 @@ export const AnimalDetailScreen = () => {
     ? MODEL_MAP[selectedSpecies.qr_code_id] ?? null
     : null;
 
+  const staticFacts: string[] = selectedSpecies.fun_facts ?? [];
+  const allFacts: string[] = aiFacts.length > 0 ? aiFacts : staticFacts;
+  const hasAiFacts = aiFacts.length > 0;
+
   const generateFunFacts = async () => {
     setLoadingFacts(true);
     try {
-      const { data } = await apiClient.post<{ facts: string[] }>(
-        `/animals/${selectedSpecies.id}/fun-facts`
-      );
-      setAiFacts(data.facts);
-      toast.success('Datos curiosos generados con IA ✨');
-    } catch {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'llama3-8b-8192',
+          messages: [{
+            role: 'user',
+            content: `Genera 3 datos curiosos sobre ${selectedSpecies.name} en español, cada uno máximo 20 palabras. Responde solo con los 3 datos, uno por línea, sin numeración.`,
+          }],
+          max_tokens: 200,
+        }),
+      });
+
+      if (!res.ok) throw new Error(`Groq error: ${res.status}`);
+
+      const data = await res.json() as { choices: { message: { content: string } }[] };
+      const text = data.choices[0]?.message?.content ?? '';
+      const facts = text.split('\n').map((l: string) => l.trim()).filter(Boolean);
+
+      console.log('[AnimalDetail] Groq facts:', facts);
+
+      if (facts.length > 0) {
+        setAiFacts(facts);
+        toast.success('Datos curiosos generados con IA ✨');
+      } else {
+        toast.error('El modelo no devolvió datos curiosos');
+      }
+    } catch (err) {
+      console.error('[AnimalDetail] Groq error:', err);
       toast.error('No se pudieron generar datos curiosos');
     } finally {
       setLoadingFacts(false);
@@ -56,7 +94,6 @@ export const AnimalDetailScreen = () => {
     <AppLayout title="Animal Detail">
       <div className="detail-container">
 
-        {/* Name + favorite toggle */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
           <h1 className="detail-name">{selectedSpecies.name}</h1>
           <button
@@ -97,46 +134,26 @@ export const AnimalDetailScreen = () => {
           {selectedSpecies.dangerLevel ?? selectedSpecies.danger_level ?? '—'}
         </SectionCard>
 
-        {selectedSpecies.fun_facts && selectedSpecies.fun_facts.length > 0 && (
-          <SectionCard title="Fun Facts">
-            <ul style={{ paddingLeft: '1.2rem', margin: 0 }}>
-              {selectedSpecies.fun_facts.map((fact, i) => (
-                <li key={i} style={{ marginBottom: '6px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                  {fact}
-                </li>
-              ))}
-            </ul>
+        {allFacts.length > 0 && (
+          <SectionCard title={hasAiFacts ? '✨ Fun Facts (IA)' : 'Fun Facts'}>
+            <FactsList facts={allFacts} />
           </SectionCard>
         )}
 
-        {/* Botón de IA para fun facts */}
         <PrimaryButton onClick={() => void generateFunFacts()} disabled={loadingFacts}>
-          {loadingFacts ? '⏳ Generando...' : '✨ Generar datos curiosos con IA'}
+          {loadingFacts ? '⏳ Generando...' : hasAiFacts ? '🔄 Regenerar con IA' : '✨ Generar datos curiosos con IA'}
         </PrimaryButton>
 
-        {aiFacts.length > 0 && (
-          <SectionCard title="✨ Datos curiosos (IA)">
-            <ul style={{ paddingLeft: '1.2rem', margin: 0 }}>
-              {aiFacts.map((fact, i) => (
-                <li key={i} style={{ marginBottom: '6px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                  {fact}
-                </li>
-              ))}
-            </ul>
-          </SectionCard>
-        )}
       </div>
 
       {showAR && glbSrc && (
-        <div
-          style={{
-            position: 'fixed', inset: 0, zIndex: 1000,
-            background: 'rgba(0,0,0,0.92)',
-            display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center',
-            padding: '1rem',
-          }}
-        >
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 1000,
+          background: 'rgba(0,0,0,0.92)',
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          padding: '1rem',
+        }}>
           <div style={{ width: '100%', maxWidth: 480, textAlign: 'center' }}>
             <h2 style={{ color: '#fff', marginBottom: '1rem', fontSize: '1.3rem' }}>
               🦾 {selectedSpecies.name} — 3D Model
@@ -151,11 +168,8 @@ export const AnimalDetailScreen = () => {
             <button
               onClick={() => setShowAR(false)}
               style={{
-                marginTop: '1.5rem',
-                padding: '12px 32px',
-                borderRadius: '14px',
-                background: 'var(--accent-primary)',
-                color: '#fff', border: 'none',
+                marginTop: '1.5rem', padding: '12px 32px', borderRadius: '14px',
+                background: 'var(--accent-primary)', color: '#fff', border: 'none',
                 cursor: 'pointer', fontWeight: 700, fontSize: '1rem',
               }}
             >

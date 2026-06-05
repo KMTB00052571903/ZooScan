@@ -6,7 +6,13 @@ import Groq from 'groq-sdk'
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 export const getAnimalsService = async (): Promise<Animal[]> => {
+  console.log('[animals.service] SUPABASE_URL:', process.env.SUPABASE_URL?.slice(0, 40))
+  console.log('[animals.service] SUPABASE_KEY exists:', !!process.env.SUPABASE_KEY)
+  console.log('[animals.service] SERVICE_ROLE_KEY exists:', !!process.env.SUPABASE_SERVICE_ROLE_KEY)
+
   const { data, error } = await supabase.from('animals').select('*')
+  console.log('[animals.service] getAnimalsService result:', data?.length ?? 0, 'error:', error?.message ?? 'ok')
+
   if (error) throw Boom.badImplementation(error.message)
   return (data ?? []) as Animal[]
 }
