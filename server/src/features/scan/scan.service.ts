@@ -1,6 +1,5 @@
 import { supabase } from '../../config/supabase'
 import Boom from '@hapi/boom'
-import { getIO } from '../../socket'
 import type { Scan, CreateScanDTO } from './scan.types'
 
 export const getScansService = async (user_id?: string, animal_id?: string): Promise<Scan[]> => {
@@ -45,14 +44,6 @@ export const createScanService = async (scan: CreateScanDTO): Promise<Scan> => {
     .select()
     .single()
   if (error) throw Boom.badRequest(error.message)
-
-  const result = data as Scan
-
-  getIO()?.to('staff').emit('scan:new', {
-    animal_id: scan.animal_id,
-    user_id: scan.user_id,
-    scanned_at: scan.created_at,
-  })
-
-  return result
+  // Supabase Realtime notifica automáticamente a los clientes suscritos
+  return data as Scan
 }

@@ -1,13 +1,19 @@
 import { useEffect } from 'react';
-import { io } from 'socket.io-client';
+import { supabase } from '../services/supabase';
 
 export const useRealtime = (onNewScan: (data: unknown) => void) => {
   useEffect(() => {
-    const socket = io(import.meta.env.VITE_API_URL ?? 'http://localhost:3000');
-    socket.emit('join:staff');
+    const channel = supabase
+      .channel('scans-realtime')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'scans' },
+        (payload) => {
+          onNewScan(payload.new);
+        }
+      )
+      .subscribe();
 
-    socket.on('scan:new', onNewScan);
-
-    return () => { socket.disconnect(); };
+    return () => { supabase.removeChannel(channel); };
   }, [onNewScan]);
 };

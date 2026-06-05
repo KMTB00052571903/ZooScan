@@ -1,16 +1,32 @@
 import { useEffect } from 'react';
-import { io } from 'socket.io-client';
+import { supabase } from '../services/supabase';
 import toast from 'react-hot-toast';
 
 export const useRealtime = () => {
   useEffect(() => {
-    const socket = io(import.meta.env.VITE_API_URL ?? 'http://localhost:3000');
-    socket.emit('join:visitor');
+    const channel = supabase
+      .channel('announcements-channel')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'announcements' },
+        (payload) => {
+          const announcement = payload.new as { message: string; animal_id?: string };
+          toast(`📣 Anuncio del zoo: ${announcement.message}`, {
+            duration: 8000,
+            style: {
+              background: 'var(--accent-primary, #16a34a)',
+              color: '#fff',
+              fontWeight: '600',
+              fontSize: '15px',
+              padding: '16px',
+              borderRadius: '16px',
+            },
+            icon: '🦁',
+          });
+        }
+      )
+      .subscribe();
 
-    socket.on('announcement:new', (data: { message: string; animal_id?: string }) => {
-      toast(`📢 ${data.message}`, { duration: 5000 });
-    });
-
-    return () => { socket.disconnect(); };
+    return () => { supabase.removeChannel(channel); };
   }, []);
 };

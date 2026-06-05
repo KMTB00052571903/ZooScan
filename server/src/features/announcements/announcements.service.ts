@@ -1,6 +1,5 @@
 import { supabase } from '../../config/supabase'
 import Boom from '@hapi/boom'
-import { getIO } from '../../socket'
 import type { Announcement, CreateAnnouncementDTO } from './announcements.types'
 
 export const createAnnouncementService = async (
@@ -14,15 +13,8 @@ export const createAnnouncementService = async (
     .single()
 
   if (error) throw Boom.badRequest(error.message)
-
-  const announcement = data as Announcement
-
-  getIO()?.to('visitor').emit('announcement:new', {
-    message: announcement.message,
-    animal_id: announcement.animal_id,
-  })
-
-  return announcement
+  // Supabase Realtime notifica automáticamente a los visitantes suscritos
+  return data as Announcement
 }
 
 export const getAnnouncementsService = async (limit = 5): Promise<Announcement[]> => {
