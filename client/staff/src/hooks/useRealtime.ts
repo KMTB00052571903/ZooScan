@@ -4,7 +4,7 @@ import { supabase } from '../services/supabase';
 export const useRealtime = (onNewScan: (data: unknown) => void) => {
   useEffect(() => {
     const channel = supabase
-      .channel('scans-channel')
+      .channel('scans-realtime')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'scans' },
